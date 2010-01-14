@@ -1,0 +1,7 @@
+syntax: glob
+*.log
+*.sqlite3
+*.tmp
+*.orig
+sqlite3.dll
+vendor

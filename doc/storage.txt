@@ -1,0 +1,29 @@
+This document explains how reports are stored to allow human corrections help the algorithm
+learn.
+
+We assume there exists a parse(string) function that parses an input and attached labels to it.
+The labels might be names or start with "?" to denote unlabelled values. This is just the
+parse result, no knowledge learned from other reports is applied to this value.
+
+Reports will be stored in a reports database table, where each row has the following fields:
+ - id: autonumeric, primary key
+ - original: contains the original report and it is never modified once stored the first time.
+ - parsed: contains parse(original) in a string such that parse(parsed) = parsed.
+
+In the user interface all the reports will be shown, showing both original and parsed results.
+The user can correct information:
+ - remove a report
+ - change a label (might be applying a label if the previous label was an unknown ("?") one)
+ - change a value
+ - remove a key value pair
+ - reorder key values pairs
+ 
+Each of these changes modifies *just* the parsed result.
+
+The algorithm works with parsed results. This storage makes it ideal to keep original reports
+and to help the algorithm learn by just storing the parsed result, either the original parsed
+result or one that was corrected.
+
+When a report is removed the parsed result is set to empty. Removing a report means there's
+nothing to learn from it (or maybe we should think of a way for the algorithm to learn that
+some data is garbage and should be interpreted in some way).

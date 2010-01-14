@@ -1,0 +1,241 @@
+The goal of this algorithm is to understand reports sent by users with no initial configuration and
+without giving hints to the system. For example, users send these reports:
+
+a) disease:H1N1,number: 3, confirmed: yes
+b) H1N1, yes, 3
+c) disease H1N1 number 3 confirmed yes
+d) Cholera, 5, no
+e) Flu, 8, yes
+f) 6, yes, Flu
+
+A human would label each of the fields of each report like this:
+
+a) disease: H1N1, number: 3, confirmed: yes
+b) disease: H1N1, confirmed: yes, number: 3
+c) disease: H1N1, number: 3, confirmed: yes
+d) disease: Cholera, number: 5, confirmed: no
+e) disease: Flu, number: 8, confirmed: yes
+f) number: 6, confirmed: yes, disease: Flu
+
+How would the algorithm do the same without knowing that H1N1, Cholera and Flu are
+diseases? Lets take a look at each example, assuming we have available all the examples
+at the same time:
+
+a) disease:H1N1,number: 3, confirmed: yes
+
+Easy, everything is already labelled.
+
+We asume that reports will be sent as key value pairs, where each key value pair is 
+placed between some separator (comma, dot, semicolon, slash) and the key is separated by the 
+value with a colon or equals symbol. This is not an arbitrary decision: people usually report like 
+that. Another way is to just report the values without the keys because people assume
+that the system is smart enough to understand what they mean. Or maybe just label some
+values and assume the system will understand the other. But some problems may happen: people
+forget commas or colon, maybe also forget spaces between letters and numbers. The algorithm
+will have to tackle these issues.
+
+b) H1N1, yes, 3
+
+We see in a) that H1N1 is labelled as a disease, so we can label this as disease. The same
+algorithm is applied to the other values because they are exactly the same as the example
+in a).
+
+c) disease H1N1 number 3 confirmed yes
+
+Here the report misses colons and commas. But we use a) to know how to group things.
+
+d) Cholera, 5, no
+
+We can't know if Cholera is supposed to be labelled with "confirmed" and "no" with "disease"
+or the other way around because for the algorithm those two words has no meanings. But if
+we had another report like "Cholera, 6, yes" we could guess that "Cholera" is a disease since
+it's the only unlablled item (6 will be labelled with "number" because it's the only number
+in the reports, and "yes" is labelled with "confirmed").
+
+We could give the system well known set of values. For example "yes" and "no" are always part
+of the same group (also "y" and "n"), but for now this will not be implemented. 
+
+e) Flu, 8, yes
+
+Similar to the previous example but easier since we know that "yes" is "confirmed",
+8 is the only number so it'll be lablelled with "number" so only "Flu" is unlabelled and the
+only label left is "disease". The algorithm "lerans" that "Flu" should be labelled with "disease"
+from now on.
+
+f) 6, yes, Flu
+
+Similar to the previous one.
+
+Difficulties may arise when many same values are reported, for example:
+
+a) fever: yes, confirmed: yes, number: 8, age: 23
+b) yes, no, 9, 24
+
+We cannot understand b because we can't know whether the first yes is fever or confirmed.
+Same goes with number and age. In this case, the algorithm will make a labelling with less
+confidence and it'll use the most common positions reported so far. So the naive labelling
+will be:
+
+fever: yes, confirmed: no, number: 9, age: 23
+
+Every labelling can be corrected by the user, but this will not be used by the algorithm
+to learn.
+
+So, let's go to the details of the algorithm.
+
+1. The input is lexed: 
+  - spaces
+  - words
+  - numbers
+  - separators: semicolon, comma, dot, slash
+  - groupings: parenthesis, brackets, curly braces
+  - indicators: colon, equals
+  
+2. Usually a report consists of a collection of key value pairs, or just a collection of values. The data will
+   be interpreted following this heuristic and some other heuristics. Here are some parse results:
+   
+   - "name: jack, age: 25" => {name: jack, age: 25}
+   - "name = jack, age = 25" => {name: jack, age: 25}
+   - "name jack, age 25" => {?1: name, ?2: jack, age: 25}
+     When two values are found between separators and one is a string and the other a number, assume
+     the number is the reported value. When there are two strings we don't assume anything. Consider
+     this: "low fever, age 25". We don't want to have a value "fever" with label "low".
+   - "fever 39 age 25" => {fever: 39, age: 25}
+     This is a special case: when a combination of word/number appears it is interpreted as a
+     key value report. On the other hand:
+   - "name jack fever low" => {?1: name, ?2: jack, ?3: fever, ?4: low}
+     Here each of th strings might be a reported value. If this was inteded to be a key value
+     pair report it will be adjusted later in the algorithm.
+   - "13 ore, 20 wood" => {ore: 13, wood: 20}
+     Reports can be first value then quantity.
+   - "13 ore 20 wood" => {ore: 13, wood: 20}
+     Same as before.
+     
+3. Nested reports: for grouping information.
+
+  - child[10/20] adult[30/40] => {child: {?1: 10, ?2: 30}, adult {?1: 30, ?2: 40}}
+  - child[age:10/fever:40] adult[age:30/fever:40] => {child: {age: 10, fever: 30}, adult {age: 30, fever: 40}}
+  
+  For groupings, parenthesis, brackets or curly braces may be used.
+  
+4. Understanding many reports.
+
+(TODO: for nested algorithm it's different, similar but easier)
+
+We'll use this set of reports as an example to explain the algoritm:
+
+disease: H1N1, number: 3, confirmed: yes
+disease: Flu, 6, no
+Cholera, yes, 6
+confirmed: no, Cholera, number: 5
+H1N1, 3, no
+Flu, no, 3
+
+a) All the reports are scanned to find labels and values in those labels.
+This will be held in a dictionary where each value in the dictionary is the
+label where the value was found and the amount of times that value was found
+in that label:
+
+DICTIONARY = 
+  H1N1: disease -> 1
+  Flu: disease -> 1
+  3: number -> 1
+  5: number -> 1
+  yes: confirmed -> 1
+  no: confirmed -> 1
+
+For example, in real reports the value "yes" might appear labelled as "confirmed"
+and also as "fever", so the entry in the dictionary might look like:
+
+yes: confirmed -> 30, fever -> 10
+
+b) Labels are collected:
+
+LABELS = [disease, number, confirmed]
+
+c) All the reports are scanned to see what types are found in the labels' values:
+
+TYPES = 
+  disease: string
+  number: integer
+  confirmed: string
+
+Other types might be decimal (if all the values are numbers and at least one is a
+decimal) or mixed (if some values are strings and some are numbers).
+
+d) All the reports are scanned and a dictionary of values to quantities in positions is built
+(position -> number of that value that appear in that position)
+
+POSITIONING = 
+  H1N1: 1 -> 2
+  3: 2 -> 2, 3 -> 1
+  yes: 2 -> 1, 3 -> 1
+  no: 2 -> 1, 3 -> 2
+  6: 2 -> 1, 3 -> 1
+  5: 3 -> 1
+  Flu: 2 -> 1
+  Cholera: 1 -> 1, 2 -> 1
+
+e) Each report is processed according to the previously collected information.
+
+  1) If a value is found that is not labelled, many strategies apply (when one strategy
+  is applied the others are discarded):
+
+    1.1) Check if the value is actually a label and what follows is the value
+    (use LABELS and DICTIONARY)
+    
+      "disease H1N1 ..." -> {?1: disease, ?2: H1N1, ...)
+    
+    "disease" is a label and "H1N1" is a value in that label, then we change the result to:
+    
+      {disease: H1N1, ...}
+    
+    1.2) Check if the following value is a label and it matches the found value
+    (use LABELS and DICTIONARY)
+    
+      "H1N1 disease ..." -> {?1: H1N1, ?2: disease, ...)
+    
+    "disease" is a label and "H1N1" is a value in that label, then we change the result to:
+    
+      {disease: H1N1, ...}
+      
+   1.3) Check if the value appears labelled by just a single label (use DICTIONARY).
+   
+     "H1N1 ..." -> {?1: H1N1, ...}
+     
+     "H1N1" is a value and it's in DICTIONARY, labelled only with "disease", 
+     then we change the result to:
+     
+     {disease: H1N1, ...}
+     
+   1.4) If the amount of unlabelled values is one, remove found labels from LABELS.
+   
+     1.4.1) If one label remains in LABELS, apply that label to the value.
+     
+     "disease: H1N1, confirmed: yes, 20" -> {disease: H1N1, confirmed: yes, ?1: 20}
+     
+     Just one unlabelled value remains: "?1: 20". LABELS - [disease, confirmed] = [number].
+     We label "20" with number, then we change the result to:
+     
+     {disease: H1N1, confirmed: yes, number: 20}
+     
+     If the value has also the type found in TYPES for that label, add it to DICTIONARY
+     and POSITIONING.
+     
+  1.5) If the amount of unlabelled values is more than one we use heuristics. First we
+  do REMAINING_LABELS = LABELS - "found labels".
+  
+    1.5.1) If the REMAINING_LABELS types are all different and not one of them is mixed
+    (for example "number: integer, confirmed: string") and the types of the unlabelled
+    values match those types, apply the labelling.
+    
+    "disease: H1N1, 30, maybe" -> {disease: H1N1, ?1: 30, ?2: maybe}
+    
+    30's type is integer, maybe's type is string, and REMAINING_LABEL's types are integer
+    and string, then we change the result to:
+    
+    {disease: H1N1, number: 30, confirmed: maybe}
+    
+    We add these values to DICTIONARY and POSITIONING.
+    
+    1.5.2) TODO: heuristics with DICTIONARY and POSITIONING.
