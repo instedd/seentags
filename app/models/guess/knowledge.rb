@@ -140,6 +140,31 @@ class Knowledge
     return false
   end
   
+  def apply_recursively_to(reports)
+    learned = true
+    while learned
+      learned = false
+      reports.each{|rep| learned |= apply_to(rep)}
+    end
+  end
+  
+  def simplify(reports)
+    names = {}
+    reports.each do |r|
+      r.each do |v|
+        next if v.has_name?
+        
+        if names.include?(v.name)
+          v.name = names[v.name]
+        else
+          new_name = "?" + (names.length + 1).to_s
+          v.name = new_name
+          names[v.name] = new_name
+        end
+      end
+    end
+  end
+  
   def add_to_dictionary(name, val)
     if !@dictionary.has_key?(val)
       @dictionary[val] = {}

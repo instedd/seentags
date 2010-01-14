@@ -1,19 +1,39 @@
-class ReportController < ApplicationController
+class ReportController < AuthenticatedController
 
-  def reports
-    reps = params[:reports].strip
-    reps = reps.split("\n").select{|x| x.strip.length > 0}.map{|x| Parser.new(x).parse}
-    know = Knowledge.new(reps)
-    
-    learned = true
-    while learned
-      learned = false
-      reps.each{|rep| learned |= know.apply_to(rep)}
+  before_filter :check_login
+
+  def create
+    @report_set = ReportSet.find params[:report_set_id]
+    if @report_set.nil? || @report_set.account_id != @account.id
+      redirect_to_home
+      return
     end
-      
-    reps.each{|rep| rep.simplify!}
     
-    render :json => reps.map{|x| x.to_s}
+    original = params[:report][:original].strip
+    if !original.empty?
+      parsed = Parser.new(original).parse.to_s
+      Report.create(:original => original, :parsed => parsed, :report_set_id => @report_set.id)
+    end
+  
+    redirect_to :controller => 'report_set', :action => :view, :id => @report_set.id
   end
   
+  def delete
+    report = Report.find_by_id params[:id]
+    if report.nil?
+      redirect_to_home
+      return
+    end
+    
+    report_set = ReportSet.find_by_id report.report_set_id
+    if report_set.nil? || report_set.account_id != @account.id
+      redirect_to_home
+      return
+    end
+    
+    report.delete
+    
+    redirect_to :controller => 'report_set', :action => :view, :id => report_set.id
+  end
+
 end

@@ -1,0 +1,14 @@
+<h4>Report Set <%= @report_set.name %></h4>
+
+<% form_for :report, :url => { :controller => 'report', :action => :create, :report_set_id => @report_set.id} do |f| %>
+  <%= f.text_field :original %>
+  <%= submit_tag 'Send new report' %>
+<% end %>
+
+<ul>
+  <% @reports.each do |r| %>
+    <li><%= r.original %> => <%= r.parsed %> <%= link_to "delete", :controller => 'report', :action => :delete, :id => r.id %></li>
+  <% end %>
+</ul>
+
+<%= link_to 'Go back', :controller => :home, :action => :home %>

@@ -9,6 +9,29 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 0) do
+ActiveRecord::Schema.define(:version => 20100114174319) do
+
+  create_table "accounts", :force => true do |t|
+    t.string   "name"
+    t.string   "password"
+    t.string   "salt"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "report_sets", :force => true do |t|
+    t.integer  "account_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "reports", :force => true do |t|
+    t.integer  "report_set_id"
+    t.string   "original"
+    t.string   "parsed"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

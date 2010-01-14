@@ -1,8 +1,22 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :accounts
-
   map.root :controller => 'home'
-  map.reports '/reports', :controller => 'report', :action => :reports
+  
+  map.create_account '/create_account', :controller => 'home', :action => :create_account
+  map.login '/login', :controller => 'home', :action => :login
+  map.logoff '/logoff', :controller => 'home', :action => :logoff
+  map.home '/home', :controller => 'home', :action => :home
+  map.edit_account '/account/edit', :controller => 'home', :action => :edit_account
+  map.update_account '/account/update', :controller => 'home', :action => :update_account
+  
+  map.new_report_set '/report_set/new', :controller => 'report_set', :action => :new
+  map.create_report_set '/report_set/create', :controller => 'report_set', :action => :create
+  map.view_report_set '/report_set/:id', :controller => 'report_set', :action => :view
+  map.edit_report_set '/report_set/:id/edit', :controller => 'report_set', :action => :edit
+  map.update_report_set '/report_set/:id/update', :controller => 'report_set', :action => :update
+  map.delete_report_set '/report_set/:id/delete', :controller => 'report_set', :action => :delete
+  
+  map.create_report '/report_set/:report_set_id/create_report', :controller => 'report', :action => :create
+  map.delete_report '/report/:id/delete', :controller => 'report', :action => :delete
 
   # The priority is based upon order of creation: first created -> highest priority.
 
