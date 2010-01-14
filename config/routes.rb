@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :accounts
+
   map.root :controller => 'home'
   map.reports '/reports', :controller => 'report', :action => :reports
 

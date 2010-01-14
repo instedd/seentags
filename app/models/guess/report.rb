@@ -1,6 +1,6 @@
 require 'guid'
 
-class Report
+class ParsedReport
 
   attr_reader :values
 

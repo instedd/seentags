@@ -10,7 +10,7 @@ class Parser < Lexer
 	end
 	
 	def parse_sub(finish)
-		report = Report.new
+		report = ParsedReport.new
 		
 		last_was_smart_match = true;
 		while token.value != TerminalSymbol::EOF
