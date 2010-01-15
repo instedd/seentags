@@ -10,6 +10,7 @@ function delete_report_set(id, name) {
 }
 
 var understood = {};
+var current_report = 0;
 var just_cancelled = 0;
 
 $(function() {
@@ -31,6 +32,11 @@ function correct_report(id) {
     var content = $("#report-" + id + " .understood span");
     if (content.hasClass("correcting"))
       return;
+      
+    if (current_report) {
+      cancel_correction(current_report);
+      current_report = 0;
+    }
       
     var text = $.trim(content.text());
       
@@ -54,6 +60,8 @@ function correct_report(id) {
           break;
       }
     });
+    
+    current_report = id;
 }
 
 function save_correction(id) {
@@ -64,6 +72,8 @@ function save_correction(id) {
     function(data) {
       window.location = location;
     });
+    
+  current_report = 0;
 }
 
 function cancel_correction(id) {
@@ -72,5 +82,6 @@ function cancel_correction(id) {
   content.removeClass("correcting");
   
   just_cancelled = id;
+  current_report = 0;
   return false;
 }

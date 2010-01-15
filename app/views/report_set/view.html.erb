@@ -1,4 +1,4 @@
-<h4>Report Set <%= @report_set.name %></h4>
+<h4>Report Set: <%= @report_set.name %></h4>
 
 <% form_for :report, :url => { :controller => 'report', :action => :create, :report_set_id => @report_set.id} do |f| %>
   <%= f.text_field :original, :size => 80 %>
