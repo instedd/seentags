@@ -11,13 +11,10 @@ ActionController::Routing::Routes.draw do |map|
   map.new_report_set '/report_set/new', :controller => 'report_set', :action => :new
   map.create_report_set '/report_set/create', :controller => 'report_set', :action => :create
   map.view_report_set '/report_set/:id', :controller => 'report_set', :action => :view
-  map.edit_report_set '/report_set/:id/edit', :controller => 'report_set', :action => :edit
-  map.update_report_set '/report_set/:id/update', :controller => 'report_set', :action => :update
-  map.delete_report_set '/report_set/:id/delete', :controller => 'report_set', :action => :delete
+  map.action_report_set '/report_set/:id/:action', :controller => 'report_set'
   
   map.create_report '/report_set/:report_set_id/create_report', :controller => 'report', :action => :create
-  map.delete_report '/report/:id/delete', :controller => 'report', :action => :delete
-  map.correct_report '/report/:id/correct', :controller => 'report', :action => :correct
+  map.action_report '/report/:id/:action', :controller => 'report'
 
   # The priority is based upon order of creation: first created -> highest priority.
 

@@ -14,10 +14,18 @@
   </tr>
   <% @reports.each do |r| %>
     <tr id="report-<%= r.id %>">
-      <td class="original"><%= r.original %></td>
-      <td class="understood"><%= r.parsed %></td>
+      <td class="original">
+        <%= r.original %>
+      </td>
+      <td class="understood">
+        <span><%= r.parsed %></span>
+        <% if r.corrected %>
+          <img src="/images/corrected.png" width="16" height="16" alt="corrected" title="This report was corrected"/>
+        <% end %>
+      </td>
       <td>
         <%= js "correct", "correct_report(" + r.id.to_s + ")" %>
+        <%= link_to "reset", :controller => 'report', :action => :reset, :id => r.id %>
         <%= link_to "delete", :controller => 'report', :action => :delete, :id => r.id %>
       </td>
     </tr>

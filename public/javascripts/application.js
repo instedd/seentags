@@ -28,15 +28,17 @@ $(function() {
 });
 
 function correct_report(id) {
-    var content = $("#report-" + id + " .understood");
+    var content = $("#report-" + id + " .understood span");
     if (content.hasClass("correcting"))
       return;
       
-    understood[id] = content.text();
+    var text = $.trim(content.text());
+      
+    understood[id] = text;
     
     content.addClass("correcting");
     content.contents().replaceWith(
-      '<input type="text" value="' + content.text().replace('"', '&quot;') + '" style="width:440px"/> ' + 
+      '<input type="text" value="' + text.replace('"', '&quot;') + '" style="width:440px"/> ' + 
       '<button onclick="save_correction(' + id + ')">Correct</button> ' + 
       '<button onclick="cancel_correction(' + id + ')">Cancel</button>');
     
@@ -65,7 +67,7 @@ function save_correction(id) {
 }
 
 function cancel_correction(id) {
-  var content = $("#report-" + id + " .understood");
+  var content = $("#report-" + id + " .understood span");
   content.text(understood[id]);
   content.removeClass("correcting");
   
