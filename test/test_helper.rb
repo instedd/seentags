@@ -48,11 +48,11 @@ class ActiveSupport::TestCase
     reps
   end
   
-  def assert_value(name, value, v)
-    if name == "?"
-      assert_true v.is_unnamed?
+  def assert_value(label, value, v)
+    if label == "?"
+      assert_true v.is_unlabelled?
     else
-      assert_equal name, v.name
+      assert_equal label, v.label
     end
     assert_equal value, v.value
   end

@@ -8,16 +8,16 @@ class Knowledge
     @types = {}
     reports.each do |rep|
       rep.each do |value|
-        if value.has_name?
+        if value.has_label?
           val = value.value_downcase
-          name = value.name_downcase
+          label = value.label_downcase
           
-          add_to_dictionary name, val
+          add_to_dictionary label, val
           
           # Add to labels
-          @labels.add name
+          @labels.add label
           
-          add_to_types name, val
+          add_to_types label, val
         end
       end
     end
@@ -29,15 +29,15 @@ class Knowledge
       value = report[i]
       
       # Check if the value is actually a label and what follows is the value.
-      if value.is_unnamed?
+      if value.is_unlabelled?
         val = value.value_downcase
         
         if i + 1 < report.length && @labels.include?(val)
           following = report[i + 1]
-          if following.is_unnamed?
+          if following.is_unlabelled?
             following_val = following.value_downcase
             if @dictionary.include?(following_val) && @dictionary[following_val].include?(val)
-              value.name = value.value
+              value.label = value.value
               value.value = following.value
               report.remove i + 1
               i += 1
@@ -48,16 +48,16 @@ class Knowledge
       end
       
       # Check if the following value is a label and it matches the found value.
-      if value.is_unnamed?
+      if value.is_unlabelled?
         val = value.value_downcase
         
         if i + 1 < report.length && @dictionary.include?(val)
           following = report[i + 1]
-          if following.is_unnamed?
+          if following.is_unlabelled?
             following_val = following.value_downcase
             if @labels.include?(following_val) && @dictionary[val].include?(following_val)
               value.value = value.value  
-              value.name = following.value
+              value.label = following.value
               report.remove i + 1
               i += 1
               next
@@ -67,13 +67,13 @@ class Knowledge
       end
       
       # Check if the value appears labelled by just a single label.
-      if value.is_unnamed?
+      if value.is_unlabelled?
         val = value.value_downcase
         
         if @dictionary.include?(val)
           entry = @dictionary[val]
           if entry.length == 1
-            value.name = entry.keys[0]
+            value.label = entry.keys[0]
             i += 1
             next
           end
@@ -85,7 +85,7 @@ class Knowledge
     
     # If the amount of unlabelled values is one, remove found labels from LABELS.
     unlabelled = report.unlabelled
-    remaining_labels = @labels - report.names
+    remaining_labels = @labels - report.labels
     
     if unlabelled.length == 0
       return false
@@ -97,7 +97,7 @@ class Knowledge
         label = remaining_labels.to_a[0]
         val = unlabelled[0].value_downcase
         
-        unlabelled[0].name = label
+        unlabelled[0].label = label
         
         # We learn
         add_to_dictionary label, val
@@ -124,7 +124,7 @@ class Knowledge
         unlabelled.each do |value|
           type = get_type(value.value)
           label = remaining_labels[remaining_labels_types.index(type)]
-          value.name = label
+          value.label = label
           
           val = value.value_downcase
           
@@ -149,51 +149,51 @@ class Knowledge
   end
   
   def simplify(reports)
-    names = {}
+    labels = {}
     reports.each do |r|
       r.each do |v|
-        next if v.has_name?
+        next if v.has_label?
         
-        if names.include?(v.name)
-          v.name = names[v.name]
+        if labels.include?(v.label)
+          v.label = labels[v.label]
         else
-          new_name = "?" + (names.length + 1).to_s
-          v.name = new_name
-          names[v.name] = new_name
+          new_label = "?" + (labels.length + 1).to_s
+          v.label = new_label
+          labels[v.label] = new_label
         end
       end
     end
   end
   
-  def add_to_dictionary(name, val)
+  def add_to_dictionary(label, val)
     if !@dictionary.has_key?(val)
       @dictionary[val] = {}
     end
     
     entry = @dictionary[val]
-    if !entry.has_key?(name)
-      entry[name] = 0
+    if !entry.has_key?(label)
+      entry[label] = 0
     end
     
-    entry[name] += 1
+    entry[label] += 1
   end
   
-  def add_to_types(name, val)
-    if @types.has_key?(name)
-      old_type = @types[name]
+  def add_to_types(label, val)
+    if @types.has_key?(label)
+      old_type = @types[label]
       new_type = get_type(val)
       
       if old_type != new_type
         if (old_type == :string && (new_type == :integer || new_type == :decimal)) ||
           (new_type == :string && (old_type == :integer || old_type == :decimal))
-          @types[name] = :mixed
+          @types[label] = :mixed
         elsif (old_type == :integer && new_type == :decimal) ||
           (new_type == :integer && old_type == :decimal)
-          @types[name] = :decimal
+          @types[label] = :decimal
         end
       end
     else
-      @types[name] = get_type(val)
+      @types[label] = get_type(val)
     end
   end
   

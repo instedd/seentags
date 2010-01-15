@@ -7,7 +7,10 @@
 
 <ul>
   <% @reports.each do |r| %>
-    <li><%= r.original %> => <%= r.parsed %> <%= link_to "delete", :controller => 'report', :action => :delete, :id => r.id %></li>
+    <li><%= r.original %> =>
+      <%= r.parsed %>
+      <%= link_to "delete", :controller => 'report', :action => :delete, :id => r.id %>
+      </li>
   <% end %>
 </ul>
 

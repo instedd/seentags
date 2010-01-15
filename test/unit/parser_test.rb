@@ -2,19 +2,19 @@ require 'test_helper.rb'
 
 class ParserTest < ActiveSupport::TestCase
 
-  test "name and value separated by colon" do
+  test "label and value separated by colon" do
 		rep = report("foo: bar")
 		assert_equal 1, rep.length
 		assert_value "foo", "bar", rep[0]
   end
   
-  test "name and value separated by equals" do
+  test "label and value separated by equals" do
 		rep = report("foo = bar")
 		assert_equal 1, rep.length
 		assert_value "foo", "bar", rep[0]
   end
   
-  test "many name and value separated by colon" do
+  test "many label and value separated by colon" do
 		rep = report("foo: bar, one: 12")
 		assert_equal 2, rep.length
 		assert_value "foo", "bar", rep[0]
@@ -38,7 +38,7 @@ class ParserTest < ActiveSupport::TestCase
 		assert_value "?", "high", rep[3]
   end
   
-  test "no names" do
+  test "no labels" do
 		rep = report("john 25 m")
 		assert_equal 3, rep.length
 		assert_value "?", "john", rep[0]
@@ -46,7 +46,7 @@ class ParserTest < ActiveSupport::TestCase
 		assert_value "?", "m", rep[2]
   end
   
-  test "no names 2" do
+  test "no labels 2" do
 		rep = report("john m 25")
 		assert_equal 3, rep.length
 		assert_value "?", "john", rep[0]
@@ -54,7 +54,7 @@ class ParserTest < ActiveSupport::TestCase
 		assert_value "?", 25, rep[2]
   end
   
-  test "many name and value separated by dot" do
+  test "many label and value separated by dot" do
 		rep = report("Nc 13.Dc 1.Dy 8")
 		assert_equal 3, rep.length
 		assert_value "Nc", 13, rep[0]
@@ -62,7 +62,7 @@ class ParserTest < ActiveSupport::TestCase
 		assert_value "Dy", 8, rep[2]
   end
   
-  test "many name and value separated by dot inverted" do
+  test "many label and value separated by dot inverted" do
 		rep = report("13Nc.1Dc.8Dy")
 		assert_equal 3, rep.length
 		assert_value "Nc", 13, rep[0]
@@ -70,7 +70,7 @@ class ParserTest < ActiveSupport::TestCase
 		assert_value "Dy", 8, rep[2]
   end
   
-  test "many name and value separated by spaces" do
+  test "many label and value separated by spaces" do
 		rep = report("Nc 13 Dc 1 Dy 8")
 		assert_equal 3, rep.length
 		assert_value "Nc", 13, rep[0]
@@ -78,7 +78,7 @@ class ParserTest < ActiveSupport::TestCase
 		assert_value "Dy", 8, rep[2]
   end
   
-  test "many name and value separated by spaces 2" do
+  test "many label and value separated by spaces 2" do
 		rep = report("13 Nc 1 Dc 8 Dy")
 		assert_equal 3, rep.length
 		assert_value "Nc", 13, rep[0]
@@ -104,7 +104,7 @@ class ParserTest < ActiveSupport::TestCase
 		assert_equal 5, rep.length
   end
   
-  test "many name and value bug 1" do
+  test "many label and value bug 1" do
 		rep = report("10 ore, 20 wood 30 stone")
 		assert_equal 3, rep.length
 		assert_value "ore", 10, rep[0]
@@ -112,7 +112,7 @@ class ParserTest < ActiveSupport::TestCase
 		assert_value "stone", 30, rep[2]
   end
   
-  test "many name and value bug 2" do
+  test "many label and value bug 2" do
 		rep = report("10 ore, wood 20 stone 30")
 		assert_equal 3, rep.length
 		assert_value "ore", 10, rep[0]

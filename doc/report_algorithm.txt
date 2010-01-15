@@ -237,5 +237,5 @@ e) Each report is processed according to the previously collected information.
     {disease: H1N1, number: 30, confirmed: maybe}
     
     We add these values to DICTIONARY and POSITIONING.
-    
-    1.5.2) TODO: heuristics with DICTIONARY and POSITIONING.
+  
+  These steps are applied recursively until the algorithm doesn't learn new things.

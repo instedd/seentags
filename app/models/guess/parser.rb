@@ -30,7 +30,7 @@ class Parser < Lexer
 			when TerminalSymbol::WORD
 				# Case of a single word
 				if peek_next_skip_space_is_EOF(token)
-					report.add_unnamed token.input
+					report.add_unlabelled token.input
 					next_token_skip_space
 					last_was_smart_match = false
 				else
@@ -39,7 +39,7 @@ class Parser < Lexer
   				when TerminalSymbol::COLON, TerminalSymbol::EQUALS
   					# Case of a single word followed by colon
   					if peek_next_skip_space_is_EOF(peek)
-  						report.add_unnamed token.input
+  						report.add_unlabelled token.input
   						next_token_skip_space_times 2
   						last_was_smart_match = false
   					else
@@ -67,13 +67,13 @@ class Parser < Lexer
   						last_was_smart_match = true
   					else
     					# No smart match
-    					report.add_unnamed token.input
+    					report.add_unlabelled token.input
     					next_token_skip_space
     					last_was_smart_match = false
     				end
   				else
   					# No smart match, add unknown
-  					report.add_unnamed token.input
+  					report.add_unlabelled token.input
   					next_token_skip_space
   					last_was_smart_match = false
   			  end
@@ -81,7 +81,7 @@ class Parser < Lexer
 			when TerminalSymbol::NUMBER
 				# Case of a single number
 				if peek_next_skip_space_is_EOF(token)
-					report.add_unnamed token.number
+					report.add_unlabelled token.number
 					next_token_skip_space
 					last_was_smart_match = false
 				else
@@ -97,13 +97,13 @@ class Parser < Lexer
   						last_was_smart_match = true
   					else
   					  # No smart match, add unknown
-  					  report.add_unnamed token.number
+  					  report.add_unlabelled token.number
     					next_token_skip_space
     					last_was_smart_match = false
   					end
   				else
   					# No smart match, add unknown
-  					report.add_unnamed token.number
+  					report.add_unlabelled token.number
   					next_token_skip_space
   					last_was_smart_match = false
   			  end
@@ -163,11 +163,11 @@ class Parser < Lexer
 		size = report.length
 		if size == 0
 		  nested.each do |value|
-		    report.add value.name, value.value
+		    report.add value.label, value.value
 		  end
-		elsif report[size - 1].is_unnamed? && report[size - 1].value.class == String
+		elsif report[size - 1].is_unlabelled? && report[size - 1].value.class == String
 			last = report[size - 1]
-			last.name = last.value.to_s
+			last.label = last.value.to_s
 			last.value = nil
 			last.nested = nested
 		else

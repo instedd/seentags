@@ -8,20 +8,20 @@ class ParsedReport
     @values = []
   end
   
-  def add(name, value)
-    @values.push Value.new(self, name, value)
+  def add(label, value)
+    @values.push Value.new(self, label, value)
   end
   
-  def add_unnamed(value)
+  def add_unlabelled(value)
     add '?' + Guid.new.to_s, value
   end
   
-  def [](index_or_name)
-    if index_or_name.class <= Integer
-      return @values[index_or_name]
+  def [](index_or_label)
+    if index_or_label.class <= Integer
+      return @values[index_or_label]
     else
       @values.each do |value|
-        return value if value.name == index_or_name
+        return value if value.label == index_or_label
       end
       return nil
     end
@@ -32,18 +32,18 @@ class ParsedReport
   end
   
   def unlabelled
-    @values.select{|x| x.is_unnamed?}
+    @values.select{|x| x.is_unlabelled?}
   end
   
-  def names
-    Set.new(@values.select{|x| x.has_name?}.map{|x| x.name})
+  def labels
+    Set.new(@values.select{|x| x.has_label?}.map{|x| x.label})
   end
   
   def simplify!
     i = 1
     @values.each do |value|
-      if value.is_unnamed?
-        value.name = "?" + i.to_s
+      if value.is_unlabelled?
+        value.label = "?" + i.to_s
         i += 1
       end
     end
@@ -77,24 +77,24 @@ end
 class Value
 
   attr_reader :parent
-  attr_accessor :name, :value, :nested
+  attr_accessor :label, :value, :nested
   
-  def initialize(parent, name, value)
+  def initialize(parent, label, value)
     @parent = parent
-    @name = name
+    @label = label
     @value = value
   end
   
-  def is_unnamed?
-    return (name[0]).chr == '?'
+  def is_unlabelled?
+    return (label[0]).chr == '?'
   end
   
-  def has_name?
-    return !is_unnamed?
+  def has_label?
+    return !is_unlabelled?
   end
   
-  def name_downcase
-    return name.downcase
+  def label_downcase
+    return label.downcase
   end
   
   def value_downcase
@@ -104,7 +104,7 @@ class Value
   
   def to_s
     sb = ''
-    sb += name
+    sb += label
     sb += ': '
     sb += value.to_s if !value.nil?
     sb += nested.to_s if !nested.nil?
