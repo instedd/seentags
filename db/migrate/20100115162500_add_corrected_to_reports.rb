@@ -1,6 +1,6 @@
 class AddCorrectedToReports < ActiveRecord::Migration
   def self.up
-    add_column :reports, :corrected, :boolean, :default => 1
+    add_column :reports, :corrected, :boolean, :default => 0
   end
 
   def self.down

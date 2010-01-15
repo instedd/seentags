@@ -32,7 +32,7 @@ ActiveRecord::Schema.define(:version => 20100115162500) do
     t.string   "parsed"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "corrected",     :default => true
+    t.boolean  "corrected",     :default => false
   end
 
 end
