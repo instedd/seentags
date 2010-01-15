@@ -5,13 +5,25 @@
   <%= submit_tag 'Send new report' %>
 <% end %>
 
-<ul>
+<% if @reports.length > 0 %>
+<table class="reports">
+  <tr>
+    <th>Received</th>
+    <th>Understood</th>
+    <th></th>
+  </tr>
   <% @reports.each do |r| %>
-    <li><%= r.original %> =>
-      <%= r.parsed %>
-      <%= link_to "delete", :controller => 'report', :action => :delete, :id => r.id %>
-      </li>
+    <tr id="report-<%= r.id %>">
+      <td class="original"><%= r.original %></td>
+      <td class="understood"><%= r.parsed %></td>
+      <td>
+        <%= js "correct", "correct_report(" + r.id.to_s + ")" %>
+        <%= link_to "delete", :controller => 'report', :action => :delete, :id => r.id %>
+      </td>
+    </tr>
   <% end %>
-</ul>
+</table>
+<br/>
+<% end %>
 
 <%= link_to 'Go back', :controller => :home, :action => :home %>

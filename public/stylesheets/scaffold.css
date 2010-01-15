@@ -76,6 +76,30 @@ h2 {
   color: green;
 }
 
+table.reports {
+  padding: 0px;
+  border: 0px;
+  border-spacing: 6px;
+}
+
+.reports td {
+  border: 0px;
+  padding-left: 4px;
+  padding-right: 4px;
+  background-color: #EAEAEA;
+}
+
+.reports td.understood {
+  width: 600px;
+}
+
+.reports th  {
+  border: 0px;
+  padding: 1px;
+  background-color: #AAAAAA;
+  font-size: 12px;
+}
+
 acronym {
   border-bottom: 1px dashed black;
 }

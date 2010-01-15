@@ -61,14 +61,13 @@ class ParsedReport
   
   
   def to_s
-    sb = '{'
+    sb = ''
     (0...length).each do |i|
       if i != 0
         sb += ', '
       end
       sb += @values[i].to_s
     end
-    sb += '}'
 		sb
   end
 
@@ -107,7 +106,7 @@ class Value
     sb += label
     sb += ': '
     sb += value.to_s if !value.nil?
-    sb += nested.to_s if !nested.nil?
+    sb += '{' + nested.to_s + '}' if !nested.nil?
     sb
   end
 

@@ -17,6 +17,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.create_report '/report_set/:report_set_id/create_report', :controller => 'report', :action => :create
   map.delete_report '/report/:id/delete', :controller => 'report', :action => :delete
+  map.correct_report '/report/:id/correct', :controller => 'report', :action => :correct
 
   # The priority is based upon order of creation: first created -> highest priority.
 
