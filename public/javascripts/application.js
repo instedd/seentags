@@ -10,6 +10,22 @@ function delete_report_set(id, name) {
 }
 
 var understood = {};
+var just_cancelled = 0;
+
+$(function() {
+  $('.understood').click(function() {
+    var id = $(this).parent('tr').attr('id');
+    id = id.substr(7);
+    
+    // If the user clicked 'cancel' we receive this event
+    // but we don't want to start editing again
+    if (id == just_cancelled) {
+      just_cancelled = 0;
+      return;
+    }
+    correct_report(id);
+  });
+});
 
 function correct_report(id) {
     var content = $("#report-" + id + " .understood");
@@ -18,11 +34,24 @@ function correct_report(id) {
       
     understood[id] = content.text();
     
-    content.addClass("correcting");    
+    content.addClass("correcting");
     content.contents().replaceWith(
-      '<input onkeydown="if (event.keyCode == 13) { save_correction(' + id + '); }"  type="text" value="' + content.text().replace('"', '&quot;') + '" style="width:440px"/> ' + 
+      '<input type="text" value="' + content.text().replace('"', '&quot;') + '" style="width:440px"/> ' + 
       '<button onclick="save_correction(' + id + ')">Correct</button> ' + 
       '<button onclick="cancel_correction(' + id + ')">Cancel</button>');
+    
+    var input = content.contents('input');
+    input.focus();
+    input.keydown(function(event) {
+      switch(event.keyCode) {
+        case 13:
+          save_correction(id);
+          break;
+        case 27:
+          cancel_correction(id);
+          break;
+      }
+    });
 }
 
 function save_correction(id) {
@@ -36,7 +65,10 @@ function save_correction(id) {
 }
 
 function cancel_correction(id) {
-    var content = $("#report-" + id + " .understood");
-    content.text(understood[id]);
-    content.removeClass("correcting");
+  var content = $("#report-" + id + " .understood");
+  content.text(understood[id]);
+  content.removeClass("correcting");
+  
+  just_cancelled = id;
+  return false;
 }
