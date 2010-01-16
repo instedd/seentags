@@ -41,6 +41,7 @@ class ReportSetController < AuthenticatedController
     know = Knowledge.new @parsed
     know.apply_recursively_to @parsed
     know.simplify @parsed
+    know.unify_labels @parsed
     
     @reports.each_index do |i|
       @reports[i].parsed = @parsed[i].to_s
@@ -96,6 +97,16 @@ class ReportSetController < AuthenticatedController
     
     flash[:notice] = 'Report Set was deleted'
     redirect_to_home
+  end
+  
+  def download_csv
+    @report_set = ReportSet.find params[:id]
+    if @report_set.nil? || @report_set.account_id != @account.id
+      redirect_to_home
+      return
+    end
+    
+    head :ok
   end
 
 end

@@ -156,11 +156,31 @@ class KnowledgeTest < ActiveSupport::TestCase
     assert_value 'disease', 'ari', rep[2]
   end
   
+  test "rule only value of given type and only label of given type" do
+    reps = get_reps
+    know = Knowledge.new(reps)
+    
+    rep = report('one, two, 40')
+    assert_true know.apply_to(rep)
+    
+    assert_value 'number', 40, rep[2]
+  end
+  
   test "bug loop 1" do
     reps = reports('disase: H1N1, confirmed: yes, number: 3')
     know = Knowledge.new(reps)
     
     assert_false know.apply_to(reps[0])
+  end
+  
+  test "unify labels" do
+    reps = reports('one, two, three', 'one, two, three')
+    know = Knowledge.new(reps)
+    know.unify_labels reps
+    
+    (0..2).each do |i|
+      assert_equal reps[0][i].label, reps[1][i].label
+    end
   end
   
   def get_reps

@@ -108,36 +108,42 @@ class Knowledge
     
     # If the amount of unlabelled values is more than one we use heuristics.
     
-    # If the REMAINING_LABELS types are all different and not one of them is mixed
-    # (for example "number: integer, confirmed: string") and the types of the unlabelled
-    # values match those types, apply the labelling.
-    if remaining_labels.length == unlabelled.length
-      remaining_labels = remaining_labels.to_a
+    # For each value, we see if it's the is different from other values.
+    # If so, and if a single label is found for that type, we apply and learn.
+    # For this, we make a dictionary of type -> labels, and type -> values.
+    type2labels = {}
+    type2values = {}
     
-      remaining_labels_types = remaining_labels.map{|x| @types[x]}
-      unlabelled_types = unlabelled.map{|x| get_type(x.value)}
-      
-      if all_different_and_not_mixed(remaining_labels_types) &&
-        all_different_and_not_mixed(unlabelled_types) &&
-        Set.new(unlabelled_types) == Set.new(remaining_labels_types)
-        
-        unlabelled.each do |value|
-          type = get_type(value.value)
-          label = remaining_labels[remaining_labels_types.index(type)]
-          value.label = label
-          
-          val = value.value_downcase
-          
-          # We learn
-          add_to_dictionary label, val
-          add_to_types label, val
-        end
-        
-        return true
-      end
+    remaining_labels.each do |label|
+      type = @types[label]
+      push_to_list_in_hash type2labels, type, label
     end
     
-    return false
+    unlabelled.each do |un|
+      type = get_type un.value
+      push_to_list_in_hash type2values, type, un
+    end
+    
+    learned = false
+    
+    type2values.each_pair do |type, values|
+      next if values.length > 1
+      value = values[0]
+      
+      next if !type2labels.include?(type)
+      labels = type2labels[type]
+      next if labels.length > 1
+      
+      value.label = labels[0]
+      
+      # We learn
+      val = value.value_downcase
+      add_to_dictionary label, val
+      add_to_types label, val
+      learned = true
+    end
+    
+    return learned
   end
   
   def apply_recursively_to(reports)
@@ -145,6 +151,23 @@ class Knowledge
     while learned
       learned = false
       reports.each{|rep| learned |= apply_to(rep)}
+    end
+  end
+  
+  def unify_labels(reports)
+    dict = {}
+    reports.each do |r|
+      r.each do |v|
+        push_to_list_in_hash(dict, v.value_downcase, v) if !v.has_label?
+      end
+    end
+    
+    i = 0
+    dict.each_pair do |k,vs|
+      label = vs[0].label
+      vs.each do |v|
+        v.label = label
+      end
     end
   end
   
@@ -164,6 +187,8 @@ class Knowledge
       end
     end
   end
+  
+  protected
   
   def add_to_dictionary(label, val)
     if !@dictionary.has_key?(val)
@@ -220,6 +245,14 @@ class Knowledge
     end
     
     return true
+  end
+  
+  def push_to_list_in_hash(hash, key, value)
+    if hash.include?(key)
+      hash[key].push value
+    else 
+      hash[key] = [value]
+    end
   end
 
 end
