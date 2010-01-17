@@ -21,9 +21,8 @@
         <%= r.original %>
       </td>
       <td class="understood">
-        <span><%= r.parsed %></span>
-        <% if r.corrected %>
-          <img src="/images/corrected.png" width="16" height="16" alt="corrected" title="This report was corrected"/>
+        <span><%= r.parsed %></span><% if r.corrected %>
+          <img src="/images/corrected.png" width="16" height="16" style="position: relative; top:2px" alt="corrected" title="This report was corrected"/>
         <% end %>
       </td>
       <td>
