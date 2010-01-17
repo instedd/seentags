@@ -83,7 +83,7 @@ class Knowledge
       i += 1
     end
     
-    # If the amount of unlabelled values is one, remove found labels from LABELS.
+    # Remove found labels from @labels
     unlabelled = report.unlabelled
     remaining_labels = @labels - report.labels
     
@@ -91,24 +91,7 @@ class Knowledge
       return false
     end
     
-    if unlabelled.length == 1
-      # If one label remains in LABELS, apply that label to the value.
-      if remaining_labels.length == 1
-        label = remaining_labels.to_a[0]
-        val = unlabelled[0].value_downcase
-        
-        unlabelled[0].label = label
-        
-        # We learn
-        add_to_dictionary label, val
-        add_to_types label, val
-        return true
-      end
-    end
-    
-    # If the amount of unlabelled values is more than one we use heuristics.
-    
-    # For each value, we see if it's the is different from other values.
+    # For each value, we see if it's different from other values.
     # If so, and if a single label is found for that type, we apply and learn.
     # For this, we make a dictionary of type -> labels, and type -> values.
     type2labels = {}
@@ -138,8 +121,8 @@ class Knowledge
       
       # We learn
       val = value.value_downcase
-      add_to_dictionary label, val
-      add_to_types label, val
+      add_to_dictionary labels[0], val
+      add_to_types labels[0], val
       learned = true
     end
     
