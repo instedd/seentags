@@ -1,13 +1,40 @@
+# Parser a string into a ParsedReport.
+# 
+# Some examples of parsed inputs:
+#
+#   label: string ==> label: value
+#   value ==> ?1: value
+#   label1: value1, label2: value2 ==> label1: value1, label2: value2
+#   value1 value2 value3 ==> ?1: value1, ?2: value2, ?3: value3
+#   value1 number1 value2 number2 ==> value1: number1, value2: number2
+#   number1 value1 number2 value2 ==> value1: number1, value2: number2
+#
+# where the left hand side is the input and the right hand side shows
+# label value pairs of the ParsedReport. If a label is unknown it
+# beings with a question mark.
+#
+# Nested reports are possibled:
+#
+#   label1[value1, value2] ==> label1: {?1: value1, ?2: value}
+#   label1[label2: value2, label3: value3] ==> label1: {label2: value2, label3: value3}
+#
+# For groupings, any of parenthesis, bracket or curly braces are allowed, but
+# the start and end symbols must match.
 class Parser < Lexer
 
+  # Creates this parser from a string
   def initialize(source)
     super
   end
   
+  # Parses the input given in the initializer and returns
+  # a ParsedRepot.
   def parse
 		next_token_skip_space
 		return parse_sub(nil)
 	end
+	
+	private
 	
 	def parse_sub(finish)
 		report = ParsedReport.new

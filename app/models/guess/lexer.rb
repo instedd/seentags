@@ -1,7 +1,9 @@
+# Lexes an input string into tokens.
 class Lexer
 
   attr_reader :token
 
+  # Creates this lexer from a string.
   def initialize(input)
     @length = input.length
     @input = input
@@ -9,6 +11,7 @@ class Lexer
     @token = Token.new
   end
   
+  # Returns the next token in the input string.
   def next_token
     if !@token.following.nil?
 			@token = @token.following
@@ -19,6 +22,7 @@ class Lexer
 		return @token.value
   end
   
+  # Returns the token following the given token.
   def peek_next(token)
 		if !token.following.nil?
 		  return token.following
@@ -29,6 +33,8 @@ class Lexer
 		token.following = peekToken
 		return peekToken
 	end
+	
+	private
 	
 	def scan(t)
 		if @p >= @length
@@ -151,11 +157,21 @@ class Lexer
 
 end
 
+# Each lexed token.
 class Token
 
+  # The TerminalSymbol
   attr_accessor :value
+  
+  # The input string
   attr_accessor :input
+  
+  # The integer or float value of this token, in case
+  # this token's value is TerminalSymbol::NUMBER
   attr_accessor :number
+  
+  # The next peeked token, if any. Don't use this
+  # field directly, use Lexer#peek_next
   attr_accessor :following
 
 end

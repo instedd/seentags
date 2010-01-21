@@ -1,7 +1,19 @@
+# Allows gathering knowledge about a set of reports.
 class Knowledge
 
-  attr_reader :dictionary, :labels, :types
+  # A dictionary where each key is a Value's value in a report,
+  # and each value is a list of labels applied to that value.
+  attr_reader :dictionary
+  
+  # A Set of distinct labels found in the reports.
+  attr_reader :labels
+  
+  # A dictionary where each key is a label and each value is
+  # the type of the label. The type is a symbol and
+  # can be :string, :integer, :decimal or :mixed
+  attr_reader :types
 
+  # Creates a Knowlege from the given reports.
   def initialize(reports)
     @dictionary = {}
     @labels = Set.new
@@ -23,6 +35,10 @@ class Knowledge
     end
   end
   
+  # Applied this knowledge to the given report. This might modify the
+  # report based on the accumulated knowledge. If the knowledge grows
+  # (something was learned from the given report), this method returns
+  # true. Else, this method returns false.
   def apply_to(report)
     i = 0
     while i < report.length
@@ -129,6 +145,8 @@ class Knowledge
     return learned
   end
   
+  # Applied this knowledge recursively to the given reports. This simply
+  # invoked apply_to to each report until nothing more is learned.
   def apply_recursively_to(reports)
     learned = true
     while learned
@@ -137,6 +155,10 @@ class Knowledge
     end
   end
   
+  # For each set of unlabelled Value's with the same value,
+  # use the same label. For example, if two values in different reports
+  # are "?1: something" and "?2: something", the values will be transformed
+  # to "?1: something" and "?1: something" (same label for same value).
   def unify_labels(reports)
     dict = {}
     reports.each do |r|
@@ -154,6 +176,8 @@ class Knowledge
     end
   end
   
+  # By default, unlabelled Values are a question mark followed by a Guid.
+  # This transforms those guids into natural numbers.
   def simplify(reports)
     labels = {}
     reports.each do |r|
@@ -171,7 +195,7 @@ class Knowledge
     end
   end
   
-  protected
+  private
   
   def add_to_dictionary(label, val)
     if !@dictionary.has_key?(val)

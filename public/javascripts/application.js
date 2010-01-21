@@ -50,15 +50,8 @@ function correct_report(id) {
     
     var input = content.contents('input');
     input.focus();
-    input.keydown(function(event) {
-      switch(event.keyCode) {
-        case 13:
-          save_correction(id);
-          break;
-        case 27:
-          cancel_correction(id);
-          break;
-      }
+    input.keydown(function(event) { 
+      autocomplete_report(input, id, event);
     });
     
     current_report = id;
@@ -84,4 +77,15 @@ function cancel_correction(id) {
   just_cancelled = id;
   current_report = 0;
   return false;
+}
+
+function autocomplete_report(input, id, event) {
+  switch(event.keyCode) {
+    case 13:
+      save_correction(id);
+      break;
+    case 27:
+      cancel_correction(id);
+      break;
+  }
 }
