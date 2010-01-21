@@ -99,14 +99,24 @@ class ReportSetController < AuthenticatedController
     redirect_to_home
   end
   
-  def download_csv
+  def download_as_csv
     @report_set = ReportSet.find params[:id]
     if @report_set.nil? || @report_set.account_id != @account.id
       redirect_to_home
       return
     end
     
-    head :ok
+    @reports = Report.find_all_by_report_set_id @report_set.id
+    @parsed = @reports.map{|x| Parser.new(x.parsed).parse()}
+    
+    know = Knowledge.new @parsed
+    know.apply_recursively_to @parsed
+    know.simplify @parsed
+    know.unify_labels @parsed
+    
+    csv = know.to_csv(@parsed)
+    now = Time.now.strftime("%Y_%m_%d-%H_%M_%S")
+    send_data csv, :type => 'text/csv', :disposition => "attachment; filename=" + @report_set.name + "-" + now + ".csv" 
   end
 
 end

@@ -1,12 +1,13 @@
 class AuthenticatedController < ApplicationController
 
   def check_login
-    if session[:account].nil?
+    if session[:account_id].nil?
       redirect_to :action => :index
       return
     end
     
-    @account = session[:account]
+    @account_id = session[:account_id]
+    @account = Account.find_by_id @account_id
   end
   
   def redirect_to_home

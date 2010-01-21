@@ -195,6 +195,41 @@ class Knowledge
     end
   end
   
+  # Returns a CSV for the given reports.
+  def to_csv(reports)
+    all_labels = Set.new
+    reports.each do |r|
+      r.each do |v|
+        all_labels.add v.label_downcase
+      end
+    end
+    all_labels = all_labels.to_a
+    all_labels.sort! do |a, b|
+      if a[0].chr == '?'
+        b[0].chr == '?' ? a <=> b : 1
+      else
+        b[0].chr == '?' ? -1 : a <=> b
+      end
+    end
+    
+    csv = ''
+    all_labels.each_index do |i|
+      csv += ', ' unless i == 0
+      csv += all_labels[i]
+    end
+    csv += "\r\n"
+    
+    reports.each do |r|
+      all_labels.each_index do |i|
+        csv += ', ' unless i == 0
+        csv += r[all_labels[i]].value.to_s
+      end
+      csv += "\r\n"
+    end
+    
+    csv
+  end
+  
   private
   
   def add_to_dictionary(label, val)

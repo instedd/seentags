@@ -56,4 +56,14 @@ class ActiveSupport::TestCase
     end
     assert_equal value, v.value
   end
+  
+  def create_reports(report_set_id, *originals)
+    reps = []
+    originals.each do |original|
+      parsed = report(original)
+      reps << Report.create!(:report_set_id => report_set_id, :original => original, :parsed => parsed.to_s)
+    end
+    reps
+  end
+  
 end

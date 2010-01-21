@@ -3,7 +3,7 @@ class HomeController < AuthenticatedController
   before_filter :check_login, :except => [:index, :login, :create_account]
 
   def index
-    if !session[:account].nil?
+    if !session[:account_id].nil?
       redirect_to_home
       return
     end
@@ -28,9 +28,7 @@ class HomeController < AuthenticatedController
       return
     end
     
-    @account.clear_password
-    
-    session[:account] = @account
+    session[:account_id] = @account.id
     redirect_to_home
   end
   
@@ -50,9 +48,7 @@ class HomeController < AuthenticatedController
       return
     end
     
-    new_acc.clear_password
-    
-    session[:account] = new_acc
+    session[:account_id] = new_acc.id
     redirect_to_home
   end
   
@@ -85,9 +81,7 @@ class HomeController < AuthenticatedController
       flash[:account] = exisiting_acc
       redirect_to :action => :edit_account
     else    
-      exisiting_acc.clear_password
       flash[:notice] = 'Account was updated'
-      session[:account] = exisiting_acc
       redirect_to_home
     end
   end

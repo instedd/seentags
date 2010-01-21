@@ -29,8 +29,9 @@ class ParsedReport
     if index_or_label.class <= Integer
       return @values[index_or_label]
     else
+      index_or_label = index_or_label.downcase
       @values.each do |value|
-        return value if value.label == index_or_label
+        return value if value.label_downcase == index_or_label
       end
       return nil
     end
