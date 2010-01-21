@@ -21,15 +21,12 @@
         <%= r.original %>
       </td>
       <td class="understood">
-        <span><%= r.parsed %></span><% if r.corrected %>
-          <img src="/images/corrected.png" width="16" height="16" style="position: relative; top:2px" alt="corrected" title="This report was corrected"/>
-        <% end %>
+        <span><%= r.parsed %></span>
+        <%= image_tag 'corrected.png', :size => '16x16', :style => 'position: relative; top:2px', :title => 'This report was corrected' if r.corrected %>
       </td>
       <td>
         <%= js "correct", "correct_report(" + r.id.to_s + ")" %>
-        <% if r.corrected %>
-          <%= link_to "reset", :controller => 'report', :action => :reset, :id => r.id %>
-        <% end %>
+        <%= link_to "reset", :controller => 'report', :action => :reset, :id => r.id if r.corrected %>
         <%= link_to "delete", :controller => 'report', :action => :delete, :id => r.id %>
       </td>
     </tr>
