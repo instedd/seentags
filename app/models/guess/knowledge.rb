@@ -222,7 +222,8 @@ class Knowledge
     reports.each do |r|
       all_labels.each_index do |i|
         csv += ', ' unless i == 0
-        csv += r[all_labels[i]].value.to_s
+        v = r[all_labels[i]]
+        csv += v.value.to_s unless v.nil?
       end
       csv += "\r\n"
     end
