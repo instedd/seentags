@@ -11,8 +11,7 @@ class ReportController < AuthenticatedController
     
     original = params[:report][:original].strip
     if !original.empty?
-      parsed = Parser.new(original).parse.to_s
-      Report.create(:original => original, :parsed => parsed, :report_set_id => @report_set.id)
+      Report.create!(:original => original, :report_set_id => @report_set.id)
     end
   
     redirect_to :controller => 'report_set', :action => :view, :id => @report_set.id
@@ -70,7 +69,7 @@ class ReportController < AuthenticatedController
       return
     end
     
-    report.parsed = Parser.new(report.original).parse.to_s
+    report.parsed = nil
     report.corrected = false
     report.save!
   
