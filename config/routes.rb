@@ -8,6 +8,7 @@ ActionController::Routing::Routes.draw do |map|
   map.edit_account '/account/edit', :controller => 'home', :action => :edit_account
   map.update_account '/account/update', :controller => 'home', :action => :update_account
   
+  map.action_report_set '/in/:key', :controller => 'report_set', :action => 'incoming'
   map.new_report_set '/report_set/new', :controller => 'report_set', :action => :new
   map.create_report_set '/report_set/create', :controller => 'report_set', :action => :create
   map.view_report_set '/report_set/:id', :controller => 'report_set', :action => :view
@@ -15,7 +16,7 @@ ActionController::Routing::Routes.draw do |map|
   map.action_report_set '/report_set/:id/:action', :controller => 'report_set'
   
   map.action_report '/report/:id/:action', :controller => 'report'
-
+  
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:

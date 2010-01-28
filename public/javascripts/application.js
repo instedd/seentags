@@ -1,5 +1,5 @@
 function toggle(id) {
-  var elem = $('#' + id);
+  var elem = jQuery('#' + id);
   elem.toggle('fast');
 }
 
@@ -13,9 +13,9 @@ var understood = {};
 var current_report = 0;
 var just_cancelled = 0;
 
-$(function() {
-  $('.understood').click(function() {
-    var id = $(this).parent('tr').attr('id');
+jQuery(function() {
+  jQuery('.understood').click(function() {
+    var id = jQuery(this).parent('tr').attr('id');
     id = id.substr(7);
     
     // If the user clicked 'cancel' we receive this event
@@ -29,7 +29,7 @@ $(function() {
 });
 
 function correct_report(id) {
-    var content = $("#report-" + id + " .understood span");
+    var content = jQuery("#report-" + id + " .understood span");
     if (content.hasClass("correcting"))
       return;
       
@@ -38,7 +38,7 @@ function correct_report(id) {
       current_report = 0;
     }
       
-    var text = $.trim(content.text());
+    var text = jQuery.trim(content.text());
       
     understood[id] = text;
     
@@ -58,9 +58,9 @@ function correct_report(id) {
 }
 
 function save_correction(id) {
-  var text = $("#report-" + id + " .understood input").val();
+  var text = jQuery("#report-" + id + " .understood input").val();
   
-  $.post('/report/' + id + '/correct',
+  jQuery.post('/report/' + id + '/correct',
     {text: text},
     function(data) {
       window.location = location;
@@ -70,7 +70,7 @@ function save_correction(id) {
 }
 
 function cancel_correction(id) {
-  var content = $("#report-" + id + " .understood span");
+  var content = jQuery("#report-" + id + " .understood span");
   content.text(understood[id]);
   content.removeClass("correcting");
   

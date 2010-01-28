@@ -1,0 +1,12 @@
+<p id="submit_url_settings">
+	<label>Submit url:</label><br/>
+	<code style="display: inline">
+		<% unless @report_set.submit_url_key.nil? %>
+		<%= url_for :only_path => false, :controller => 'report_set', :action => 'incoming', :key => @report_set.submit_url_key %>
+		<% else %>
+		(None)
+		<% end %>
+	</code>
+	<%= link_to_remote "Generate", :update => 'submit_url_settings', :url => { :action => :generate_submit_url , :id => @report_set.id } %>
+	<%= link_to_remote "Remove", :update => 'submit_url_settings', :url => { :action => :remove_submit_url, :id => @report_set.id } unless @report_set.submit_url_key.nil? %>
+</p>

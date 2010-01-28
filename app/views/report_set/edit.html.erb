@@ -6,6 +6,9 @@
   <%= f.label :name %><br/>
   <%= f.text_field :name %>
   </p>
+
+  <%= render(:partial => 'submit_url_settings', :locals => {:report_set => @report_set}) %>
+
   <%= submit_tag 'Update Report Set' %>
 <% end %>
 
