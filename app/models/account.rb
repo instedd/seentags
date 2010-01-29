@@ -12,6 +12,7 @@ class Account < ActiveRecord::Base
     app = self.find_by_id(id_or_name) if id_or_name =~ /\A\d+\Z/ or id_or_name.kind_of? Integer
     app = self.find_by_name(id_or_name) if app.nil?
     app
+    @value = 10
   end
   
   def authenticate(password)

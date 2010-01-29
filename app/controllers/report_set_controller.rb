@@ -36,7 +36,7 @@ class ReportSetController < AuthenticatedController
     end
     
     @reports = Report.find_all_by_report_set_id @report_set.id
-    @parsed = @reports.map{|x| Parser.new(x.parsed).parse()}
+    @parsed = @reports.map{|x| Parser.new(x.parsed || x.original).parse()}
     
     know = Knowledge.new @parsed
     know.apply_recursively_to @parsed
@@ -107,7 +107,7 @@ class ReportSetController < AuthenticatedController
     end
     
     @reports = Report.find_all_by_report_set_id @report_set.id
-    @parsed = @reports.map{|x| Parser.new(x.parsed).parse()}
+    @parsed = @reports.map{|x| Parser.new(x.parsed || x.original).parse()}
     
     know = Knowledge.new @parsed
     know.apply_recursively_to @parsed
@@ -135,8 +135,7 @@ class ReportSetController < AuthenticatedController
     
     original = request.raw_post()
     if !original.empty?
-      parsed = Parser.new(original).parse.to_s
-      report = Report.create(:original => original, :parsed => parsed, :report_set_id => @report_set.id)
+      report = Report.create!(:original => original, :report_set_id => @report_set.id)
       render :text => "ID: #{report.id}"
     else
       render :text => 'post body not specified or blank', :status => 500
