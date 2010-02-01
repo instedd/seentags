@@ -9,9 +9,11 @@
 </head>
 <body>
 <% if @hide_title.nil? %>
-  <h2>seentags</h2>
   <% if !@account.nil? && !@account.id.nil? %>
-    <h3>Current account is: <%= @account.name %> (<%= link_to "logoff", :controller => :home, :action => :logoff %>)</h3>
+    <h2 style="float:left">seentags</h2>
+    <h3 style="text-align:right"><%= @account.name %> | <%= link_to "logoff", :controller => :home, :action => :logoff %></h3>
+  <% else %>
+    <h2>seentags</h2>
   <% end %>
 <% end %>
 <%= yield %>
