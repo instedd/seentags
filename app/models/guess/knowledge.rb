@@ -15,22 +15,17 @@ class Knowledge
 
   # Creates a Knowlege from the given reports.
   def initialize(reports)
-    @dictionary = {}
+    @dictionary = Hash.new{|h, k| h[k] = Hash.new 0}
     @labels = Set.new
     @types = {}
     reports.each do |rep|
       rep.each do |value|
-        if value.has_label?
-          val = value.value_downcase
-          label = value.label_downcase
-          
-          add_to_dictionary label, val
-          
-          # Add to labels
-          @labels.add label
-          
-          add_to_types label, val
-        end
+        next unless value.has_label?
+        val = value.value_downcase
+        label = value.label_downcase
+        @dictionary[val][label] += 1
+        @labels.add label
+        add_to_types label, val
       end
     end
   end
@@ -110,8 +105,8 @@ class Knowledge
     # For each value, we see if it's different from other values.
     # If so, and if a single label is found for that type, we apply and learn.
     # For this, we make a dictionary of type -> labels, and type -> values.
-    type2labels = Hash.new {|k, v| k[v] = []}
-    type2values = Hash.new {|k, v| k[v] = []}
+    type2labels = Hash.new {|h, v| h[v] = []}
+    type2values = Hash.new {|h, v| h[v] = []}
     
     remaining_labels.each{|label| type2labels[@types[label]] << label}
     unlabelled.each{|un| type2values[get_type un.value] << un}
@@ -130,7 +125,7 @@ class Knowledge
       
       # We learn
       val = value.value_downcase
-      add_to_dictionary labels[0], val
+      @dictionary[val][labels[0]] += 1
       add_to_types labels[0], val
       learned = true
     end
@@ -153,7 +148,7 @@ class Knowledge
   # are "?1: something" and "?2: something", the values will be transformed
   # to "?1: something" and "?1: something" (same label for same value).
   def unify_labels(reports)
-    dict = Hash.new {|k, v| k[v] = []}
+    dict = Hash.new {|h, v| h[v] = []}
     reports.each do |r|
       r.each do |v|
         dict[v.value_downcase] << v if !v.has_label?
@@ -225,19 +220,6 @@ class Knowledge
   end
   
   private
-  
-  def add_to_dictionary(label, val)
-    if !@dictionary.has_key?(val)
-      @dictionary[val] = {}
-    end
-    
-    entry = @dictionary[val]
-    if !entry.has_key?(label)
-      entry[label] = 0
-    end
-    
-    entry[label] += 1
-  end
   
   def add_to_types(label, val)
     if @types.has_key?(label)
