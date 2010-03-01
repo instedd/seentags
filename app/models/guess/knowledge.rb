@@ -110,18 +110,11 @@ class Knowledge
     # For each value, we see if it's different from other values.
     # If so, and if a single label is found for that type, we apply and learn.
     # For this, we make a dictionary of type -> labels, and type -> values.
-    type2labels = {}
-    type2values = {}
+    type2labels = Hash.new {|k, v| k[v] = []}
+    type2values = Hash.new {|k, v| k[v] = []}
     
-    remaining_labels.each do |label|
-      type = @types[label]
-      push_to_list_in_hash type2labels, type, label
-    end
-    
-    unlabelled.each do |un|
-      type = get_type un.value
-      push_to_list_in_hash type2values, type, un
-    end
+    remaining_labels.each{|label| type2labels[@types[label]] << label}
+    unlabelled.each{|un| type2values[get_type un.value] << un}
     
     learned = false
     
@@ -160,10 +153,10 @@ class Knowledge
   # are "?1: something" and "?2: something", the values will be transformed
   # to "?1: something" and "?1: something" (same label for same value).
   def unify_labels(reports)
-    dict = {}
+    dict = Hash.new {|k, v| k[v] = []}
     reports.each do |r|
       r.each do |v|
-        push_to_list_in_hash(dict, v.value_downcase, v) if !v.has_label?
+        dict[v.value_downcase] << v if !v.has_label?
       end
     end
     
@@ -288,14 +281,6 @@ class Knowledge
     end
     
     return true
-  end
-  
-  def push_to_list_in_hash(hash, key, value)
-    if hash.include?(key)
-      hash[key].push value
-    else 
-      hash[key] = [value]
-    end
   end
 
 end
