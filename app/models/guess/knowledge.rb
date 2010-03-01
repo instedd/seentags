@@ -155,13 +155,7 @@ class Knowledge
       end
     end
     
-    i = 0
-    dict.each_pair do |k,vs|
-      label = vs[0].label
-      vs.each do |v|
-        v.label = label
-      end
-    end
+    dict.each_pair{|k,vs| vs.each{|v| v.label = vs[0].label}}
   end
   
   # By default, unlabelled Values are a question mark followed by a Guid.
@@ -175,7 +169,7 @@ class Knowledge
         if labels.include?(v.label)
           v.label = labels[v.label]
         else
-          new_label = "?" + (labels.length + 1).to_s
+          new_label = "?#{labels.length + 1}"
           v.label = new_label
           labels[v.label] = new_label
         end
@@ -186,11 +180,7 @@ class Knowledge
   # Returns a CSV for the given reports.
   def to_csv(reports)
     all_labels = Set.new
-    reports.each do |r|
-      r.each do |v|
-        all_labels.add v.label_downcase
-      end
-    end
+    reports.each{|r| r.each{|v| all_labels << v.label_downcase}}
     all_labels = all_labels.to_a
     all_labels.sort! do |a, b|
       if a[0].chr == '?'
@@ -200,20 +190,16 @@ class Knowledge
       end
     end
     
-    csv = ''
-    all_labels.each_index do |i|
-      csv += ', ' unless i == 0
-      csv += all_labels[i]
-    end
-    csv += "\r\n"
+    csv = all_labels.join(', ')
+    csv << "\r\n"
     
     reports.each do |r|
       all_labels.each_index do |i|
-        csv += ', ' unless i == 0
+        csv << ', ' unless i == 0
         v = r[all_labels[i]]
-        csv += v.value.to_s unless v.nil?
+        csv << v.value.to_s unless v.nil?
       end
-      csv += "\r\n"
+      csv << "\r\n"
     end
     
     csv
@@ -248,21 +234,6 @@ class Knowledge
     puts value
     puts value.class
     raise 'Error!'
-  end
-  
-  def all_different_and_not_mixed(array)
-    array.each_index do |i|
-      first = array[i]
-      return false if first == :mixed
-      
-      (i+1...array.length).each do |j|
-        second = array[j]
-        return false if second == :mixed
-        return false if first == second
-      end
-    end
-    
-    return true
   end
 
 end
