@@ -12,19 +12,31 @@ class Knowledge
   # the type of the label. The type is a symbol and
   # can be :string, :integer, :decimal or :mixed
   attr_reader :types
+  
+  # A dictionary where each key is a position (number) and
+  # each value is a dictionary of labels and quantities (how many
+  # times that label appears in that position)
+  attr_reader :label_positions
 
   # Creates a Knowlege from the given reports.
   def initialize(reports)
     @dictionary = Hash.new{|h, k| h[k] = Hash.new 0}
     @labels = Set.new
     @types = {}
+    @label_positions = Hash.new{|h, k| h[k] = Hash.new 0}
+    
     reports.each do |rep|
+      position = -1
+    
       rep.each do |value|
+        position += 1
+      
         next unless value.has_label?
         val = value.value_downcase
         label = value.label_downcase
         @dictionary[val][label] += 1
         @labels.add label
+        @label_positions[position][label] += 1
         add_to_types label, val
       end
     end
@@ -128,6 +140,26 @@ class Knowledge
       @dictionary[val][labels[0]] += 1
       add_to_types labels[0], val
       learned = true
+    end
+    
+    # For each unlabelled value, match according to position
+    # (best match according) to position
+    # TODO missing learn from here, and probably learn to position dictionary
+    # in previous code (when we learn)
+    position = -1
+    report.each do |v|
+      position += 1
+      next if v.has_label?
+      
+      val = v.value_downcase
+      type = get_type(val)
+      
+      label_amounts = @label_positions[position]
+      max = label_amounts.select{|x, y| @types[x] == type}.max{|x, y| x[1] <=> y[1]}
+      next if max.nil?
+      
+      # We don't learn by position
+      v.label = max[0]
     end
     
     return learned

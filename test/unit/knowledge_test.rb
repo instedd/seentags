@@ -36,6 +36,24 @@ class KnowledgeTest < ActiveSupport::TestCase
     assert_equal :integer, types['number']
   end
   
+  test "label_positions" do
+    reps = get_reps
+    know = Knowledge.new(reps)
+    dict = know.label_positions
+    
+    assert_equal 2, dict[0]['disease']
+    assert_equal 0, dict[1]['disease']
+    assert_equal 0, dict[2]['disease']
+    
+    assert_equal 0, dict[0]['number']
+    assert_equal 1, dict[1]['number']
+    assert_equal 2, dict[2]['number']
+    
+    assert_equal 1, dict[0]['confirmed']
+    assert_equal 0, dict[1]['confirmed']
+    assert_equal 1, dict[2]['confirmed']
+  end
+  
   test "types integer and decimal is decimal" do
     reps = reports(
       'disease: 6',
@@ -164,6 +182,18 @@ class KnowledgeTest < ActiveSupport::TestCase
     assert_true know.apply_to(rep)
     
     assert_value 'number', 40, rep[2]
+  end
+  
+  test "rule match by position" do
+    reps = get_reps
+    know = Knowledge.new(reps)
+    
+    rep = report('hiv, 20, maybe')
+    assert_true know.apply_to(rep)
+    
+    assert_value 'disease', 'hiv', rep[0]
+    assert_value 'number', 20, rep[1]
+    assert_value 'confirmed', 'maybe', rep[2]
   end
   
   test "bug loop 1" do
