@@ -155,7 +155,7 @@ class Knowledge
       type = get_type(val)
       
       label_amounts = @label_positions[position]
-      max = label_amounts.select{|x, y| @types[x] == type}.max{|x, y| x[1] <=> y[1]}
+      max = label_amounts.select{|x, y| type_matches(type, @types[x])}.max{|x, y| x[1] <=> y[1]}
       next if max.nil?
       
       # We don't learn by position
@@ -266,6 +266,15 @@ class Knowledge
     puts value
     puts value.class
     raise 'Error!'
+  end
+  
+  def type_matches(from, to)
+    # This handles string, decimal and mixed cases.
+    # Also handles the case where from is :integer and to is :integer
+    return true if from == to or to == :mixed
+    # The only missing case (handled below) is when to is :integer
+    # and from is :decimal
+    return to == :decimal
   end
 
 end
