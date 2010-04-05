@@ -120,7 +120,7 @@ class ReportSetController < AuthenticatedController
   end
 
 #begin rest data submit  
-  def incoming
+  def incoming    
     unless params[:key] && !params[:key].blank?
       render :text => 'key parameter not specified', :status => 500
       return
@@ -133,8 +133,10 @@ class ReportSetController < AuthenticatedController
       return
     end
     
-    original = request.raw_post()
-    if !original.empty?
+    metadata = request.query_parameters.map { |k,v| "#{k}: #{v}, " }.join
+    body = request.raw_post()
+    original = metadata + body 
+    if !body.empty?
       report = Report.create!(:original => original, :report_set_id => @report_set.id)
       render :text => "ID: #{report.id}"
     else
