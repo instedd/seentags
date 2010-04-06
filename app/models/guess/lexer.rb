@@ -67,6 +67,17 @@ class Lexer
 			else
 				t.number = t.input.to_i
 		  end
+		when '"'
+		  # skip first quote
+		  @p += 1
+		  while @p < @length && '"' != (@input[@p]).chr
+		    @p += 1
+	    end
+	    # skip last quote
+	    @p += 1
+	    
+	    t.value = TerminalSymbol::WORD
+	    t.input = @input[start+1 ... @p-1]
 		when '('
 			t.value = TerminalSymbol::LPAREN
 			t.input = '('

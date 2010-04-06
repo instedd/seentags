@@ -13,6 +13,7 @@
   <tr>
     <th>Received</th>
     <th>Understood</th>
+	<th>Created</th>
     <th></th>
   </tr>
   <% @reports.each do |r| %>
@@ -24,6 +25,9 @@
         <span><%= r.parsed %></span>
         <%= image_tag 'corrected.png', :size => '16x16', :style => 'position: relative; top:2px', :title => 'This report was corrected' if r.corrected %>
       </td>
+      <td>
+	    <%= r.created_at %>
+	  </td>
       <td>
         <%= js "correct", "correct_report(" + r.id.to_s + ")" %>
         <%= link_to "reset", :controller => 'report', :action => :reset, :id => r.id if r.corrected %>

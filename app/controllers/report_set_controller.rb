@@ -107,7 +107,11 @@ class ReportSetController < AuthenticatedController
     end
     
     @reports = Report.find_all_by_report_set_id @report_set.id
-    @parsed = @reports.map{|x| Parser.new(x.parsed || x.original).parse()}
+    @parsed = @reports.map do |x|
+      r = Parser.new(x.parsed || x.original).parse()
+      r.add('created_at', x.created_at.to_s)
+      r
+    end
     
     know = Knowledge.new @parsed
     know.apply_recursively_to @parsed
@@ -133,7 +137,7 @@ class ReportSetController < AuthenticatedController
       return
     end
     
-    metadata = request.query_parameters.map { |k,v| "#{k}: #{v}, " }.join
+    metadata = request.query_parameters.map { |k,v| "#{k}: \"#{v}\", " }.join
     body = request.raw_post()
     original = metadata + body 
     if !body.empty?
