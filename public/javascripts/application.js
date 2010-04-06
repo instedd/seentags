@@ -44,10 +44,11 @@ function correct_report(id) {
     
     content.addClass("correcting");
     content.contents().replaceWith(
-      '<input type="text" value="' + text.replace('"', '&quot;') + '" style="width:440px"/> ' + 
+      '<input type="text" style="width:440px"/> ' + 
       '<button onclick="save_correction(' + id + ')">Correct</button> ' + 
       '<button onclick="cancel_correction(' + id + ')">Cancel</button>');
-    
+    jQuery('input', content).val(text);
+
     var input = content.contents('input');
     input.focus();
     input.keydown(function(event) { 

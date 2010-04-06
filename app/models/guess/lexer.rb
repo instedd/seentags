@@ -77,7 +77,7 @@ class Lexer
 	    @p += 1
 	    
 	    t.value = TerminalSymbol::WORD
-	    t.input = @input[start+1 ... @p-1]
+	    t.input = @input[start ... @p]
 		when '('
 			t.value = TerminalSymbol::LPAREN
 			t.input = '('

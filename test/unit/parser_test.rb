@@ -129,15 +129,15 @@ class ParserTest < ActiveSupport::TestCase
   test "no split quoted text" do
 		rep = report('from: "sms://42524", to: "mailto://jdoe@domain.com", 25')
 		assert_equal 3, rep.length
-		assert_value "from", "sms://42524", rep[0]
-		assert_value "to", "mailto://jdoe@domain.com", rep[1]
+		assert_value "from", '"sms://42524"', rep[0]
+		assert_value "to", '"mailto://jdoe@domain.com"', rep[1]
 		assert_value "?", 25, rep[2]
   end
   
   test "no split wrong quoted text" do
 		rep = report('from: "sms://42524", to: "mailto://jdoe@domain.com')
 		assert_equal 2, rep.length
-		assert_value "from", "sms://42524", rep[0]
-		assert_value "to", "mailto://jdoe@domain.com", rep[1]
+		assert_value "from", '"sms://42524"', rep[0]
+		assert_value "to", '"mailto://jdoe@domain.com', rep[1]
   end
 end
