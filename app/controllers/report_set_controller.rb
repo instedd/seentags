@@ -120,7 +120,7 @@ class ReportSetController < AuthenticatedController
     
     csv = know.to_csv(@parsed)
     now = Time.now.strftime("%Y_%m_%d-%H_%M_%S")
-    send_data csv, :type => 'text/csv', :disposition => "attachment; filename=" + @report_set.name + "-" + now + ".csv" 
+    send_data csv, :type => 'text/csv', :filename => @report_set.name + "-" + now + ".csv" 
   end
 
 #begin rest data submit  
