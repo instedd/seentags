@@ -13,14 +13,22 @@
 <h4><%= js 'Report Sets', "toggle('report_sets')" %></h4>
 
 <div id="report_sets">
-<table>
+<table class="reports">
+  <tr>
+    <th>Name</th>
+    <th>Submit URL</th>
+    <th>Actions</th>
+  </tr>
   <% @report_sets.each do |rs| %>
     <tr>
       <td><b><%= rs.name %></b></td>
-      <td><%= link_to "view reports", :controller => :report_set, :action => :view, :id => rs.id %></td>
-      <td><%= link_to "download CSV", :controller => :report_set, :action => :download_as_csv, :id => rs.id %></td>
-      <td><%= link_to "edit", :controller => :report_set, :action => :edit, :id => rs.id %></td>
-      <td><%= js 'delete', "delete_report_set(#{rs.id}, '#{h rs.name}')" %></td>
+      <td><b><%= url_for :only_path => false, :controller => 'report_set', :action => 'incoming', :key => rs.submit_url_key %></b></td>
+      <td>
+        <%= link_to "view reports", :controller => :report_set, :action => :view, :id => rs.id %>
+        <%= link_to "download CSV", :controller => :report_set, :action => :download_as_csv, :id => rs.id %>
+        <%= link_to "edit", :controller => :report_set, :action => :edit, :id => rs.id %>
+        <%= js 'delete', "delete_report_set(#{rs.id}, '#{h rs.name}')" %>
+      </td>
     </tr>
   <% end %>
 </table>

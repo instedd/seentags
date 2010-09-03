@@ -3,11 +3,6 @@ class HomeController < AuthenticatedController
   before_filter :check_login, :except => [:index, :login, :create_account]
 
   def index
-    if !session[:account_id].nil?
-      redirect_to_home
-      return
-    end
-  
     @account = flash[:account]
     @new_account = flash[:new_account]
   end

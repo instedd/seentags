@@ -1,5 +1,8 @@
 <h4>Report Set: <%= @report_set.name %></h4>
 
+<div><b>Submit URL:</b> <%= url_for :only_path => false, :controller => 'report_set', :action => 'incoming', :key => @report_set.submit_url_key %></b></div>
+<br/>
+
 <div><%= link_to "Download as CSV", :controller => :report_set, :action => :download_as_csv, :id => @report_set.id %></div>
 <br/>
 

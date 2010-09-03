@@ -123,7 +123,6 @@ class ReportSetController < AuthenticatedController
     send_data csv, :type => 'text/csv', :filename => @report_set.name + "-" + now + ".csv" 
   end
 
-#begin rest data submit  
   def incoming    
     unless params[:key] && !params[:key].blank?
       render :text => 'key parameter not specified', :status => 500
@@ -147,20 +146,5 @@ class ReportSetController < AuthenticatedController
       render :text => 'post body not specified or blank', :status => 500
     end
   end
-  
-  def generate_submit_url
-    @report_set = ReportSet.find params[:id]
-    @report_set.submit_url_key = Guid.new.to_s
-    @report_set.save
-    render :partial => 'submit_url_settings'
-  end
-
-  def remove_submit_url
-    @report_set = ReportSet.find params[:id]
-    @report_set.submit_url_key = nil
-    @report_set.save
-    render :partial => 'submit_url_settings'
-  end
-#end rest data submit
 
 end
