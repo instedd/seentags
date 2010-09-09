@@ -123,7 +123,7 @@ class ReportSetController < AuthenticatedController
     send_data csv, :type => 'text/csv', :filename => @report_set.name + "-" + now + ".csv" 
   end
 
-  def incoming    
+  def incoming
     unless params[:key] && !params[:key].blank?
       render :text => 'key parameter not specified', :status => 500
       return
@@ -136,8 +136,15 @@ class ReportSetController < AuthenticatedController
       return
     end
     
-    metadata = request.query_parameters.map { |k,v| "#{k}: \"#{v}\", " }.join
-    body = request.raw_post()
+    metadata = request.query_parameters.map { |k,v|
+      k == 'action' ? '' : "#{k}: \"#{v}\", "
+    }.join
+    
+    if request.content_type == 'application/x-www-form-urlencoded'
+      body = params['body']
+    else
+      body = request.raw_post()
+    end
     original = metadata + body 
     if !body.empty?
       report = Report.create!(:original => original, :report_set_id => @report_set.id)

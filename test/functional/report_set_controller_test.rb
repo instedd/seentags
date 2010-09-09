@@ -11,8 +11,8 @@ class ReportSetControllerTest < ActionController::TestCase
     
     assert_response :ok
     assert_equal(
-      "?1, ?2, ?3\r\n" + 
-      "one, two, three\r\n", 
+      "created_at, ?1, ?2, ?3\r\n" + 
+      "#{reports[0].created_at.to_s}, one, two, three\r\n", 
       @response.body)
   end
   
@@ -25,9 +25,9 @@ class ReportSetControllerTest < ActionController::TestCase
     
     assert_response :ok
     assert_equal(
-      "label1, ?1, ?2\r\n" + 
-      "one, two, three\r\n" + 
-      "one, two, three\r\n", 
+      "created_at, label1, ?1, ?2\r\n" + 
+      "#{reports[0].created_at.to_s}, one, two, three\r\n" + 
+      "#{reports[1].created_at.to_s}, one, two, three\r\n", 
       @response.body)
   end
   
@@ -40,8 +40,8 @@ class ReportSetControllerTest < ActionController::TestCase
     
     assert_response :ok
     assert_equal(
-      "?1, ?2, ?3\r\n" + 
-      "1, 2, 3\r\n", 
+      "created_at, ?1, ?2, ?3\r\n" + 
+      "#{reports[0].created_at.to_s}, 1, 2, 3\r\n", 
       @response.body)
   end
   
@@ -54,11 +54,37 @@ class ReportSetControllerTest < ActionController::TestCase
     
     assert_response :ok
     assert_equal(
-      "confirmed, disease, no\r\n" +
-      "yes, H1N1, 40\r\n" +
-      ", H1N1, 30\r\n" +
-      "no, cholera, 50\r\n",
+      "confirmed, created_at, disease, no\r\n" +
+      "yes, #{reports[0].created_at.to_s}, H1N1, 40\r\n" +
+      ", #{reports[1].created_at.to_s}, H1N1, 30\r\n" +
+      "no, #{reports[2].created_at.to_s}, cholera, 50\r\n",
       @response.body)
+  end
+  
+  test "incoming plain" do
+    account = Account.create!(:name => 'acc', :password => 'pass', :password_confirmation => 'pass')
+    report_set = ReportSet.create!(:account_id => account.id, :name => 'rep_set')
+    
+    @request.env['RAW_POST_DATA'] = 'one, two, three'
+    @request.env['CONTENT_TYPE'] = 'text/plain'
+    post :incoming, {:key => report_set.submit_url_key}
+    
+    reports = Report.all
+    assert_equal 1, reports.length
+    assert_equal 'one, two, three', reports[0].original
+  end
+  
+  test "incoming form" do
+    account = Account.create!(:name => 'acc', :password => 'pass', :password_confirmation => 'pass')
+    report_set = ReportSet.create!(:account_id => account.id, :name => 'rep_set')
+    
+    @request.env['RAW_POST_DATA'] = 'baz=foo&body=one, two, three'
+    @request.env['CONTENT_TYPE'] = 'application/x-www-form-urlencoded'
+    post :incoming, {:key => report_set.submit_url_key, :baz => 'foo', :body => 'one, two, three'}
+    
+    reports = Report.all
+    assert_equal 1, reports.length
+    assert_equal 'one, two, three', reports[0].original
   end
   
 end
