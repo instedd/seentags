@@ -240,9 +240,12 @@ class Knowledge
   private
   
   def add_to_types(label, val)
+    return unless val
+  
+    new_type = get_type(val)
+    
     if @types.has_key?(label)
       old_type = @types[label]
-      new_type = get_type(val)
       
       if old_type != new_type
         if (old_type == :string && (new_type == :integer || new_type == :decimal)) ||
@@ -254,7 +257,7 @@ class Knowledge
         end
       end
     else
-      @types[label] = get_type(val)
+      @types[label] = new_type
     end
   end
   

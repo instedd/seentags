@@ -213,6 +213,12 @@ class KnowledgeTest < ActiveSupport::TestCase
     end
   end
   
+  test "bug1" do
+    reps = reports('unit (pallet)')
+    
+    know = Knowledge.new(reps)
+  end
+  
   def get_reps
     reports(
       'disease: H1N1, number: 3, confirmed: yes',
