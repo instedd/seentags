@@ -17,6 +17,7 @@ class ReportSetController < AuthenticatedController
     @report_set = ReportSet.new(report_set)
     @report_set.account_id = @account.id
     @report_set.name = report_set[:name]
+    @report_set.url_callback = report_set[:url_callback]
     
     if !@report_set.save
       flash[:report_set] = @report_set
@@ -75,6 +76,7 @@ class ReportSetController < AuthenticatedController
     end
     
     @report_set.name = report_set[:name]
+    @report_set.url_callback = report_set[:url_callback]
     
     if !@report_set.save
       flash[:report_set] = @report_set

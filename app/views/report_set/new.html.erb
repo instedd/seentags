@@ -6,6 +6,10 @@
   <%= f.label :name %><br/>
   <%= f.text_field :name %>
   </p>
+  <p>
+  <%= f.label :url_callback, 'Callback' %><br/>
+  <%= f.text_field :url_callback, :size => 75 %>
+  </p>
   <%= submit_tag 'Create Report Set' %>
 <% end %>
 
