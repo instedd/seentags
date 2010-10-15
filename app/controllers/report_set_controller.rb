@@ -150,10 +150,18 @@ class ReportSetController < AuthenticatedController
     original = metadata + body 
     if !body.empty?
       report = Report.create!(:original => original, :report_set_id => @report_set.id)
+      enqueue_callback(report)
       render :text => "ID: #{report.id}"
     else
       render :text => 'post body not specified or blank', :status => 500
     end
+  end
+  
+  private
+  
+  def enqueue_callback(report)
+    return unless @report_set.has_callback?
+    Delayed::Job.enqueue ForwardReportJob.new(report.id)
   end
 
 end

@@ -87,4 +87,33 @@ class ReportSetControllerTest < ActionController::TestCase
     assert_equal 'one, two, three', reports[0].original
   end
   
+  test "incoming should enqueue forward job if callback" do
+    account = Account.create!(:name => 'acc', :password => 'pass', :password_confirmation => 'pass')
+    report_set = ReportSet.create!(:account_id => account.id, :name => 'rep_set', :url_callback => 'http://www.domain.com/some/url')
+    
+    @request.env['RAW_POST_DATA'] = 'one, two, three'
+    @request.env['CONTENT_TYPE'] = 'text/plain'
+    post :incoming, {:key => report_set.submit_url_key}
+    
+    jobs = Delayed::Job.all
+    assert_equal 1, jobs.length
+    
+    job = jobs[0]
+    job = YAML::load job.handler
+    assert_equal 'ForwardReportJob', job.class.to_s
+    assert_equal Report.first.id, job.report_id
+  end
+  
+  test "incoming shouldn't enqueue forward job if no callback is present" do
+    account = Account.create!(:name => 'acc', :password => 'pass', :password_confirmation => 'pass')
+    report_set = ReportSet.create!(:account_id => account.id, :name => 'rep_set')
+    
+    @request.env['RAW_POST_DATA'] = 'one, two, three'
+    @request.env['CONTENT_TYPE'] = 'text/plain'
+    post :incoming, {:key => report_set.submit_url_key}
+    
+    jobs = Delayed::Job.all
+    assert_equal 0, jobs.length
+  end
+  
 end
