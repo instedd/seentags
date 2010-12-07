@@ -141,6 +141,53 @@ class ParserTest < ActiveSupport::TestCase
 		assert_value "to", '"mailto://jdoe@domain.com', rep[1]
   end
 
+  test "parse many reports before" do
+    reps = reports("a: 1, b:2, a:3, b:4, c:5")
+    assert_equal 2, reps.length
+
+    assert_equal 3, reps[0].length
+    assert_value "a", 1, reps[0][0]
+    assert_value "b", 2, reps[0][1]
+    assert_value "c", 5, reps[0][2]
+
+    assert_equal 3, reps[1].length
+    assert_value "a", 3, reps[1][0]
+    assert_value "b", 4, reps[1][1]
+    assert_value "c", 5, reps[1][2]
+  end
+
+  test "parse many reports after" do
+    reps = reports("c:5, a: 1, b:2, a:3, b:4")
+    assert_equal 2, reps.length
+
+    assert_equal 3, reps[0].length
+    assert_value "c", 5, reps[0][0]
+    assert_value "a", 1, reps[0][1]
+    assert_value "b", 2, reps[0][2]
+
+    assert_equal 3, reps[1].length
+    assert_value "c", 5, reps[1][0]
+    assert_value "a", 3, reps[1][1]
+    assert_value "b", 4, reps[1][2]
+  end
+
+  test "parse many reports between" do
+    reps = reports("c:5, a: 1, b:2, a:3, b:4, d:6")
+    assert_equal 2, reps.length
+
+    assert_equal 4, reps[0].length
+    assert_value "c", 5, reps[0][0]
+    assert_value "a", 1, reps[0][1]
+    assert_value "b", 2, reps[0][2]
+    assert_value "d", 6, reps[0][3]
+
+    assert_equal 4, reps[1].length
+    assert_value "c", 5, reps[1][0]
+    assert_value "a", 3, reps[1][1]
+    assert_value "b", 4, reps[1][2]
+    assert_value "d", 6, reps[0][3]
+  end
+
   test "bug 1" do
     report('ONE=,')
   end

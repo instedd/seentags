@@ -199,7 +199,6 @@ class KnowledgeTest < ActiveSupport::TestCase
   test "bug loop 1" do
     reps = reports('disase: H1N1, confirmed: yes, number: 3')
     know = Knowledge.new(reps)
-
     assert_false know.apply_to(reps[0])
   end
 
@@ -215,7 +214,6 @@ class KnowledgeTest < ActiveSupport::TestCase
 
   test "bug1" do
     reps = reports('unit (pallet)')
-
     know = Knowledge.new(reps)
   end
 

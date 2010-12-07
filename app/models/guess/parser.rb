@@ -20,6 +20,8 @@
 #
 # For groupings, any of parenthesis, bracket or curly braces are allowed, but
 # the start and end symbols must match.
+#
+# The parser
 class Parser < Lexer
 
   # Creates this parser from a string
@@ -28,10 +30,11 @@ class Parser < Lexer
   end
 
   # Parses the input given in the initializer and returns
-  # a ParsedRepot.
+  # an array of ParsedReports.
   def parse
 		next_token_skip_space
-		return parse_sub(nil)
+		result = parse_sub(nil)
+    split result
 	end
 
 	private
@@ -246,5 +249,44 @@ class Parser < Lexer
 			return false
 		end
 	end
+
+  def split(result)
+    labels = []
+    different_sets = []
+    fix_set = nil
+    fix_set_after = []
+    counter = 0
+    result.values.each_with_index do |value, idx|
+      label = value.label.downcase
+      label_idx = labels.index label
+      if label_idx
+        if fix_set.nil?
+          fix_set = result.values[0 ... label_idx]
+          different_sets << result.values[label_idx ... idx]
+          different_sets << [value]
+        else
+          different_sets << [] if different_sets.length == labels.length
+          different_sets.last << value
+        end
+      else
+        if fix_set
+          fix_set_after << value
+        end
+      end
+      labels << label.downcase
+    end
+
+    return [result] if different_sets.length <= 1
+
+    result = []
+    different_sets.each do |diff|
+      values = []
+      fix_set.each{|v| values << v}
+      diff.each{|v| values << v}
+      fix_set_after.each{|v| values << v}
+      result << ParsedReport.new(values)
+    end
+    result
+  end
 
 end
