@@ -24,7 +24,7 @@
       <td><%= report.original %></td>
       <td class="understood">
         <% report.parsed.each_with_index do |parse, idx| %>
-          <div class="piece" style="line-height:24px"><span class="content"><%= parse %></span> <a href="#" onclick="javascript:correct_report(this, <%= report.id %>, <%= idx %>)">correct</a></div>
+          <div class="piece" style="line-height:24px"><span class="content"><%= parse %></span> <a href="#" onclick="javascript:correct_report(this, <%= report.id %>, <%= idx %>)">fix</a></div>
         <% end %>
       </td>
       <td>

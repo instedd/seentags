@@ -34,11 +34,6 @@ class ReportSetController < AuthenticatedController
     @reports = Report.find_all_by_report_set_id @report_set.id
     @parsed = Report.parse_all @reports
 
-    @parsed.each do |p|
-      puts p.class
-      puts p
-    end
-
     know = Knowledge.new @parsed
     know.apply_recursively_to @parsed
     know.simplify @parsed
