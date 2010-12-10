@@ -65,8 +65,7 @@ class ActiveSupport::TestCase
   def create_reports(report_set_id, *originals)
     reps = []
     originals.each do |original|
-      parsed = report(original)
-      reps << Report.create!(:report_set_id => report_set_id, :original => original, :parsed => parsed.to_s)
+      reps << Report.create!(:report_set_id => report_set_id, :original => original)
     end
     reps
   end

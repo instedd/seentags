@@ -1,7 +1,7 @@
 class ReportSetController < AuthenticatedController
 
   before_filter :check_login, :except => :incoming
-  before_filter :check_report_set, :only => [:view, :edit, :update, :delete]
+  before_filter :check_report_set, :only => [:view, :edit, :update, :delete, :download_as_csv]
 
   def new
     @report_set = flash[:report_set]
