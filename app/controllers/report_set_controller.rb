@@ -1,6 +1,7 @@
 class ReportSetController < AuthenticatedController
 
   before_filter :check_login, :except => :incoming
+  before_filter :check_report_set, :only => [:view, :edit, :update, :delete]
 
   def new
     @report_set = flash[:report_set]
@@ -30,58 +31,34 @@ class ReportSetController < AuthenticatedController
   end
 
   def view
-    @report_set = ReportSet.find params[:id]
-    if @report_set.nil? || @report_set.account_id != @account.id
-      redirect_to_home
-      return
-    end
-
     @reports = Report.find_all_by_report_set_id @report_set.id
     @parsed = Report.parse_all @reports
+
+    @parsed.each do |p|
+      puts p.class
+      puts p
+    end
 
     know = Knowledge.new @parsed
     know.apply_recursively_to @parsed
     know.simplify @parsed
     know.unify_labels @parsed
-
-    @reports.each_index do |i|
-      @reports[i].parsed = @parsed[i].to_s
-    end
   end
 
   def edit
-    @report_set = ReportSet.find params[:id]
-    if @report_set.nil? || @report_set.account_id != @account.id
-      redirect_to_home
-      return
-    end
-
-    if !flash[:report_set].nil?
-      @report_set = flash[:report_set]
-    end
+    @report_set = flash[:report_set ]if flash[:report_set]
   end
 
   def update
     report_set = params[:report_set]
-
-    if report_set.nil?
-      redirect_to_home
-      return
-    end
-
-    @report_set = ReportSet.find params[:id]
-    if @report_set.nil? || @report_set.account_id != @account.id
-      redirect_to_home
-      return
-    end
+    return redirect_to_home unless report_set
 
     @report_set.name = report_set[:name]
     @report_set.url_callback = report_set[:url_callback]
 
     if !@report_set.save
       flash[:report_set] = @report_set
-      redirect_to :action => :edit
-      return
+      return redirect_to :action => :edit
     end
 
     flash[:notice] = 'Report Set was updated'
@@ -89,25 +66,13 @@ class ReportSetController < AuthenticatedController
   end
 
   def delete
-    @report_set = ReportSet.find params[:id]
-    if @report_set.nil? || @report_set.account_id != @account.id
-      redirect_to_home
-      return
-    end
-
-    @report_set.delete
+    @report_set.destroy
 
     flash[:notice] = 'Report Set was deleted'
     redirect_to_home
   end
 
   def download_as_csv
-    @report_set = ReportSet.find params[:id]
-    if @report_set.nil? || @report_set.account_id != @account.id
-      redirect_to_home
-      return
-    end
-
     @reports = Report.find_all_by_report_set_id @report_set.id
     @parsed = Report.parse_all @reports do |report, parsed|
       parsed.add('created_at', report.created_at.to_s)
@@ -132,8 +97,7 @@ class ReportSetController < AuthenticatedController
     @report_set = ReportSet.find_by_submit_url_key params[:key]
 
     if @report_set.nil?
-      render :text => 'report set not found', :status => 404
-      return
+      return render :text => 'report set not found', :status => 404
     end
 
     metadata = request.query_parameters.map { |k,v|
@@ -156,6 +120,12 @@ class ReportSetController < AuthenticatedController
   end
 
   private
+
+  def check_report_set
+    @report_set = ReportSet.find params[:id]
+    return redirect_to_home unless @report_set && @report_set.account_id == @account.id
+    true
+  end
 
   def enqueue_callback(report)
     return unless @report_set.has_callback?

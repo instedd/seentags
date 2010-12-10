@@ -3,19 +3,25 @@ class Report < ActiveRecord::Base
 
   validates_presence_of :original, :report_set
 
-  # Parsed all given Reports and returns them in an array.
-  # If a block is given it must contains two arguments,
-  # the first one is the original report and the second one
-  # is a parse of it. This allows modifying each parse.
-  def self.parse_all(reports)
+  serialize :parsed
+
+  def self.parse_all(reports, &block)
     parsed = []
     reports.each do |report|
-      reps = Parser.new(report.parsed || report.original).parse
-      reps.each do |rep|
-        yield report, rep if block_given?
-        parsed << rep
+      report.parse.each do |parse|
+        yield report, parse if block_given?
+        parsed << parse
       end
     end
     parsed
+  end
+
+  def parse
+    if self.parsed
+      self.parsed = self.parsed.map!{|x| Parser.parse(x)}.flatten
+    else
+      self.parsed = Parser.parse(self.original)
+    end
+    self.parsed
   end
 end

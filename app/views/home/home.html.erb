@@ -27,7 +27,7 @@
         <%= link_to "view reports", :controller => :report_set, :action => :view, :id => rs.id %>
         <%= link_to "download CSV", :controller => :report_set, :action => :download_as_csv, :id => rs.id %>
         <%= link_to "edit", :controller => :report_set, :action => :edit, :id => rs.id %>
-        <%= js 'delete', "delete_report_set(#{rs.id}, '#{h rs.name}')" %>
+        <%= link_to "delete", {:controller => :report_set, :action => :delete, :id => rs.id}, :confirm => "Are you sure you want to delete the report set #{rs.name}?" %>
       </td>
     </tr>
   <% end %>

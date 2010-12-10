@@ -37,6 +37,10 @@ class Parser < Lexer
     split result
 	end
 
+  def self.parse(source)
+    Parser.new(source).parse
+  end
+
 	private
 
 	def parse_sub(finish)

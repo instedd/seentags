@@ -5,3 +5,5 @@ syntax: glob
 *.orig
 sqlite3.dll
 vendor
+.rvmrc
+tags

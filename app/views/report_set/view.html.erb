@@ -19,22 +19,20 @@
 	<th>Created</th>
     <th></th>
   </tr>
-  <% @reports.each do |r| %>
-    <tr id="report-<%= r.id %>">
-      <td class="original">
-        <%= r.original %>
-      </td>
+  <% @reports.each do |report| %>
+    <tr class="report" valign="baseline">
+      <td><%= report.original %></td>
       <td class="understood">
-        <span><%= r.parsed %></span>
-        <%= image_tag 'corrected.png', :size => '16x16', :style => 'position: relative; top:2px', :title => 'This report was corrected' if r.corrected %>
+        <% report.parsed.each_with_index do |parse, idx| %>
+          <div class="piece" style="line-height:24px"><span class="content"><%= parse %></span> <a href="#" onclick="javascript:correct_report(this, <%= report.id %>, <%= idx %>)">correct</a></div>
+        <% end %>
       </td>
       <td>
-	    <%= r.created_at %>
+	    <%= report.created_at %>
 	  </td>
       <td>
-        <%= js "correct", "correct_report(" + r.id.to_s + ")" %>
-        <%= link_to "reset", :controller => 'report', :action => :reset, :id => r.id if r.corrected %>
-        <%= link_to "delete", :controller => 'report', :action => :delete, :id => r.id %>
+        <%= link_to "reset", :controller => 'report', :action => :reset, :id => report.id if report.corrected %>
+        <%= link_to "delete", :controller => 'report', :action => :delete, :id => report.id %>
       </td>
     </tr>
   <% end %>
