@@ -266,10 +266,11 @@ class Parser < Lexer
       if label_idx
         if fix_set.nil?
           fix_set = result.values[0 ... label_idx]
+          labels = labels[label_idx ... idx]
           different_sets << result.values[label_idx ... idx]
           different_sets << [value]
         else
-          different_sets << [] if different_sets.length == labels.length
+          different_sets << [] if different_sets.last.length == labels.length
           different_sets.last << value
         end
       else
@@ -277,7 +278,7 @@ class Parser < Lexer
           fix_set_after << value
         end
       end
-      labels << label.downcase
+      labels << label.downcase if different_sets.empty?
     end
 
     return [result] if different_sets.length <= 1
