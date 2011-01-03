@@ -76,6 +76,14 @@ class ParsedReport
     end
 		sb
   end
+  
+  def to_h
+    h = {}
+    @values.each do |value|
+      h[value.label] = value.value
+    end
+    h
+  end
 
   def inspect
     "[#{to_s}]"

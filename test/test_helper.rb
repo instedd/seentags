@@ -1,6 +1,7 @@
 ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
+require File.expand_path(File.dirname(__FILE__) + "/blueprints")
 
 class ActiveSupport::TestCase
   include Mocha::API
@@ -69,5 +70,7 @@ class ActiveSupport::TestCase
     end
     reps
   end
+  
+  setup { Sham.reset }
 
 end
