@@ -1,0 +1,15 @@
+%h4 Create new Report Set
+
+= form_for :report_set, :url => { :controller => 'report_set', :action => :create} do |f|
+  = f.error_messages
+  %p
+    = f.label :name
+    %br/
+    = f.text_field :name
+  %p
+    = f.label :url_callback, 'Callback'
+    %br/
+    = f.text_field :url_callback, :size => 75
+  = submit_tag 'Create Report Set'
+
+= link_to 'Go back', :controller => :home, :action => :home

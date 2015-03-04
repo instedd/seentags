@@ -1,0 +1,31 @@
+- if !flash[:notice].nil?
+  %div{:style => "border:1px solid black; background:#FFF1A8; padding:4px; font-weight:bold"}= flash[:notice]
+
+%h4= js 'Settings', "toggle('settings')"
+
+#settings
+  %ul
+    %li= link_to "Edit settings / Change password", :controller => :home, :action => :edit_account
+
+%h4= js 'Report Sets', "toggle('report_sets')"
+
+#report_sets
+  %table.reports
+    %tr
+      %th Name
+      %th Submit URL
+      %th Actions
+    - @report_sets.each do |rs|
+      %tr
+        %td
+          %b= rs.name
+        %td
+          %b= url_for :only_path => false, :controller => 'report_set', :action => 'incoming', :key => rs.submit_url_key
+        %td
+          = link_to "view reports", :controller => :report_set, :action => :view, :id => rs.id
+          = link_to "download CSV", :controller => :report_set, :action => :download_as_csv, :id => rs.id
+          = link_to "edit", :controller => :report_set, :action => :edit, :id => rs.id
+          = link_to "delete", {:controller => :report_set, :action => :delete, :id => rs.id}, :confirm => "Are you sure you want to delete the report set #{rs.name}?"
+  %br/
+
+  = link_to "Create new Report Set", :controller => :report_set, :action => :new

@@ -1,0 +1,18 @@
+%h4 Edit settings / Change password
+
+= form_for :account, :url => { :controller => 'home', :action => :update_account} do |f|
+  = f.error_messages
+  %p
+    %b Leave blank if you don't want to change the password
+    %br/
+    = f.label :password
+    %br/
+    = f.password_field :password, :autocomplete => :off
+  %p
+    = f.label :password_confirmation
+    %br/
+    = f.password_field :password_confirmation, :autocomplete => :off
+  %hr/
+  = submit_tag 'Update'
+
+= link_to 'Go back', :controller => :home, :action => :home

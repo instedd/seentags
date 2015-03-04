@@ -1,0 +1,31 @@
+%h3 Login to your account:
+
+= form_for :account, :url => { :controller => 'home', :action => :login } do |f|
+  %p
+    = f.label :name
+    %br/
+    = f.text_field :name
+  %p
+    = f.label :password
+    %br/
+    = f.password_field :password
+  %p{:style => "color:red"}= flash[:notice]
+  = submit_tag 'Login'
+
+%h3 Or create a new one:
+
+= form_for :new_account, :url => { :controller => 'home', :action => :create_account } do |f|
+  = f.error_messages
+  %p
+    = f.label :name
+    %br/
+    = f.text_field :name, :autocomplete => :off
+  %p
+    = f.label :password
+    %br/
+    = f.password_field :password, :autocomplete => :off
+  %p
+    = f.label :password_confirmation
+    %br/
+    = f.password_field :password_confirmation, :autocomplete => :off
+  = submit_tag 'Create Account'
