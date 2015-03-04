@@ -10,6 +10,8 @@ gem 'jquery-rails'
 gem 'guid'
 gem 'delayed_job_active_record'
 gem 'dynamic_form'
+gem 'instedd-bootstrap', git: "https://bitbucket.org/instedd/instedd-bootstrap.git", branch: 'master'
+gem 'haml-rails'
 
 group :development, :test do
   gem 'web-console', '~> 2.0'

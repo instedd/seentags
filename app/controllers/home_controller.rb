@@ -3,8 +3,8 @@ class HomeController < AuthenticatedController
   before_filter :check_login, :except => [:index, :login, :create_account]
 
   def index
-    @account = flash[:account]
-    @new_account = flash[:new_account]
+    @account = Account.new
+    @new_account = Account.new
   end
 
   def login
@@ -17,9 +17,10 @@ class HomeController < AuthenticatedController
 
     @account = Account.find_by_name acc[:name]
     if @account.nil? || !@account.authenticate(acc[:password])
-      flash[:account] = Account.new(:name => acc[:name])
+      @account = Account.new(:name => acc[:name])
+      @new_account = Account.new
       flash[:notice] = 'Invalid name/password'
-      redirect_to :action => :index
+      render 'index'
       return
     end
 
@@ -38,8 +39,9 @@ class HomeController < AuthenticatedController
     new_acc = Account.new(acc)
     if !new_acc.save
       new_acc.clear_password
-      flash[:new_account] = new_acc
-      redirect_to :action => :index
+      @account = Account.new
+      @new_account = new_acc
+      render 'index'
       return
     end
 

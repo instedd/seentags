@@ -1,0 +1,16 @@
+- content_for :html_title do
+  Seentags
+
+- content_for :app_name do
+  Seentags
+
+- content_for :app_logo do
+  = image_tag "instedd-bootstrap/header/logos/seentags.png"
+
+- content_for :app_version do
+  = Seentags::Application.config.version_name
+
+- top_nav_bar do
+  - top_nav_bar_item 'Home', root_path
+
+= render template: 'instedd/application'

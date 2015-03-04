@@ -1,0 +1,4 @@
+.btn-group.pull-right
+  - if !@account.nil? && !@account.id.nil?
+    - dropdown @account.name do
+      - dropdown_item 'Sign out', url_for(:controller => :home, :action => :logoff)
