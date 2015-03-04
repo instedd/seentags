@@ -1,6 +1,6 @@
 <h4>Edit settings / Change password</h4>
 
-<% form_for :account, :url => { :controller => 'home', :action => :update_account} do |f| %>
+<%= form_for :account, :url => { :controller => 'home', :action => :update_account} do |f| %>
   <%= f.error_messages %>
   <p>
   <b>Leave blank if you don't want to change the password</b><br/>

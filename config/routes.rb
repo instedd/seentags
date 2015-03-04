@@ -1,61 +1,77 @@
-ActionController::Routing::Routes.draw do |map|
-  map.root :controller => 'home'
-  
-  map.create_account '/create_account', :controller => 'home', :action => :create_account
-  map.login '/login', :controller => 'home', :action => :login
-  map.logoff '/logoff', :controller => 'home', :action => :logoff
-  map.home '/home', :controller => 'home', :action => :home
-  map.edit_account '/account/edit', :controller => 'home', :action => :edit_account
-  map.update_account '/account/update', :controller => 'home', :action => :update_account
-  
-  map.action_report_set '/in/:key', :controller => 'report_set', :action => 'incoming'
-  map.new_report_set '/report_set/new', :controller => 'report_set', :action => :new
-  map.create_report_set '/report_set/create', :controller => 'report_set', :action => :create
-  map.view_report_set '/report_set/:id', :controller => 'report_set', :action => :view
-  map.create_report '/report_set/:report_set_id/create_report', :controller => 'report', :action => :create
-  map.action_report_set '/report_set/:id/:action', :controller => 'report_set'
-  
-  map.action_report '/report/:id/:action', :controller => 'report'
-  
+Rails.application.routes.draw do
+  root to: 'home#index'
+
+  post '/login' => 'home#login'
+  get '/logoff' => 'home#logoff'
+  get '/home' => 'home#home'
+
+  post '/create_account' => 'home#create_account'
+  get '/account/edit' => 'home#edit_account'
+  post '/account/update' => 'home#update_account'
+
+  match '/in/:key' => 'report_set#incoming', via: [:get, :post]
+
+  get '/report_set/new' => 'report_set#new'
+  post '/report_set/create' => 'report_set#create'
+  get '/report_set/:id' => 'report_set#view'
+
+  post '/report_set/:report_set_id/create_report' => 'report#create'
+  match '/report_set/:id/:action', :controller => 'report_set', via: [:get, :post, :put, :delete]
+
+  match '/report/:id/:action', :controller => 'report', via: [:get, :post, :put, :delete]
+
   # The priority is based upon order of creation: first created -> highest priority.
+  # See how all your routes lay out with "rake routes".
 
-  # Sample of regular route:
-  #   map.connect 'products/:id', :controller => 'catalog', :action => 'view'
-  # Keep in mind you can assign values other than :controller and :action
+  # You can have the root of your site routed with "root"
+  # root 'welcome#index'
 
-  # Sample of named route:
-  #   map.purchase 'products/:id/purchase', :controller => 'catalog', :action => 'purchase'
-  # This route can be invoked with purchase_url(:id => product.id)
+  # Example of regular route:
+  #   get 'products/:id' => 'catalog#view'
 
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   map.resources :products
+  # Example of named route that can be invoked with purchase_url(id: product.id)
+  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
-  # Sample resource route with options:
-  #   map.resources :products, :member => { :short => :get, :toggle => :post }, :collection => { :sold => :get }
+  # Example resource route (maps HTTP verbs to controller actions automatically):
+  #   resources :products
 
-  # Sample resource route with sub-resources:
-  #   map.resources :products, :has_many => [ :comments, :sales ], :has_one => :seller
-  
-  # Sample resource route with more complex sub-resources
-  #   map.resources :products do |products|
-  #     products.resources :comments
-  #     products.resources :sales, :collection => { :recent => :get }
+  # Example resource route with options:
+  #   resources :products do
+  #     member do
+  #       get 'short'
+  #       post 'toggle'
+  #     end
+  #
+  #     collection do
+  #       get 'sold'
+  #     end
   #   end
 
-  # Sample resource route within a namespace:
-  #   map.namespace :admin do |admin|
-  #     # Directs /admin/products/* to Admin::ProductsController (app/controllers/admin/products_controller.rb)
-  #     admin.resources :products
+  # Example resource route with sub-resources:
+  #   resources :products do
+  #     resources :comments, :sales
+  #     resource :seller
   #   end
 
-  # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
-  # map.root :controller => "welcome"
+  # Example resource route with more complex sub-resources:
+  #   resources :products do
+  #     resources :comments
+  #     resources :sales do
+  #       get 'recent', on: :collection
+  #     end
+  #   end
 
-  # See how all your routes lay out with "rake routes"
+  # Example resource route with concerns:
+  #   concern :toggleable do
+  #     post 'toggle'
+  #   end
+  #   resources :posts, concerns: :toggleable
+  #   resources :photos, concerns: :toggleable
 
-  # Install the default routes as the lowest priority.
-  # Note: These default routes make all actions in every controller accessible via GET requests. You should
-  # consider removing or commenting them out if you're using named routes and resources.
-  # map.connect ':controller/:action/:id'
-  # map.connect ':controller/:action/:id.:format'
+  # Example resource route within a namespace:
+  #   namespace :admin do
+  #     # Directs /admin/products/* to Admin::ProductsController
+  #     # (app/controllers/admin/products_controller.rb)
+  #     resources :products
+  #   end
 end

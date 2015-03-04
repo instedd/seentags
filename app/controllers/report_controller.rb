@@ -3,11 +3,13 @@ class ReportController < AuthenticatedController
   before_filter :check_login
   before_filter :check_report, :only => [:delete, :correct, :reset]
 
+  skip_before_action :verify_authenticity_token, :only => [:correct]
+
   def create
-    @report_set = ReportSet.find params[:report_set_id]
+    @report_set = ReportSet.find params.permit![:report_set_id]
     return redirect_to_home unless @report_set && @report_set.account_id == @account.id
 
-    original = params[:report][:original].strip
+    original = params.permit![:report][:original].strip
     if original.present?
       Report.create!(:original => original, :report_set_id => @report_set.id)
     end
@@ -23,13 +25,13 @@ class ReportController < AuthenticatedController
 
   # Invoked with ajax
   def correct
-    idx = params[:idx].to_i
+    idx = params.permit![:idx].to_i
     return redirect_to_home if idx < 0
 
     parsed = @report.parse
     return redirect_to_home unless idx < parsed.length
 
-    current_parsed = Parser.parse(params[:text])
+    current_parsed = Parser.parse(params.permit![:text])
 
     new_parsed = []
 
@@ -64,7 +66,7 @@ class ReportController < AuthenticatedController
   private
 
   def check_report
-    @report = Report.find_by_id params[:id]
+    @report = Report.find_by_id params.permit![:id]
     return redirect_to_home unless @report
 
     @report_set = @report.report_set

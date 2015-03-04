@@ -3,12 +3,14 @@ class ReportSetController < AuthenticatedController
   before_filter :check_login, :except => :incoming
   before_filter :check_report_set, :only => [:view, :edit, :update, :delete, :download_as_csv]
 
+  skip_before_action :verify_authenticity_token, :only => [:incoming]
+
   def new
     @report_set = flash[:report_set]
   end
 
   def create
-    report_set = params[:report_set]
+    report_set = params.permit![:report_set]
 
     if report_set.nil?
       redirect_to_home
@@ -45,7 +47,7 @@ class ReportSetController < AuthenticatedController
   end
 
   def update
-    report_set = params[:report_set]
+    report_set = params.permit![:report_set]
     return redirect_to_home unless report_set
 
     @report_set.name = report_set[:name]
@@ -89,7 +91,7 @@ class ReportSetController < AuthenticatedController
       return
     end
 
-    @report_set = ReportSet.find_by_submit_url_key params[:key]
+    @report_set = ReportSet.find_by_submit_url_key params.permit![:key]
 
     if @report_set.nil?
       return render :text => 'report set not found', :status => 404
@@ -100,24 +102,24 @@ class ReportSetController < AuthenticatedController
     }.join
 
     if request.content_type == 'application/x-www-form-urlencoded'
-      body = params['body']
+      body = params.permit!['body'].presence || request.raw_post
     else
       body = request.raw_post()
     end
-    original = metadata + body
-    if !body.empty?
+    original = metadata + (body || "")
+    if body.blank?
+      render :text => 'post body not specified or blank', :status => 500
+    else
       report = Report.create!(:original => original, :report_set_id => @report_set.id)
       enqueue_callback(report)
       render :text => "ID: #{report.id}"
-    else
-      render :text => 'post body not specified or blank', :status => 500
     end
   end
 
   private
 
   def check_report_set
-    @report_set = ReportSet.find params[:id]
+    @report_set = ReportSet.find params.permit![:id]
     return redirect_to_home unless @report_set && @report_set.account_id == @account.id
     true
   end

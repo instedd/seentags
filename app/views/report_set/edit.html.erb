@@ -1,6 +1,6 @@
 <h4>Edit Report Set <%= @report_set.name %></h4>
 
-<% form_for :report_set, :url => { :controller => 'report_set', :action => :update } do |f| %>
+<%= form_for :report_set, :url => { :controller => 'report_set', :action => :update } do |f| %>
   <%= f.error_messages %>
   <p>
   <%= f.label :name %><br/>

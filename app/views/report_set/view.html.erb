@@ -6,7 +6,7 @@
 <div><%= link_to "Download as CSV", :controller => :report_set, :action => :download_as_csv, :id => @report_set.id %></div>
 <br/>
 
-<% form_for :report, :url => { :controller => 'report', :action => :create, :report_set_id => @report_set.id} do |f| %>
+<%= form_for :report, :url => { :controller => 'report', :action => :create, :report_set_id => @report_set.id} do |f| %>
   <%= f.text_field :original, :size => 80 %>
   <%= submit_tag 'Send new report' %>
 <% end %>

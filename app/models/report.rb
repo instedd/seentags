@@ -16,6 +16,10 @@ class Report < ActiveRecord::Base
     parsed
   end
 
+  def self.find_all_by_report_set_id(report_set_id)
+    where("report_set_id = ?", report_set_id).all
+  end
+
   def parse
     if self.parsed
       self.parsed = self.parsed.map!{|x| Parser.parse(x)}.flatten
