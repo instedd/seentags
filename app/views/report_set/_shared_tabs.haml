@@ -1,0 +1,12 @@
+.row-fluid
+  .span12
+    %h3 #{@report_set.name}
+%br
+.row-fluid
+  .span12
+    .tabbable
+      %ul.nav.nav-tabs
+        %li{:class => "#{'active' if params[:action] == 'view'}" }
+          = link_to "View reports", :controller => :report_set, :action => :view
+        %li{:class => "#{'active' if params[:action] == 'edit'}" }
+          = link_to "Edit", :controller => :report_set, :action => :edit

@@ -1,18 +1,21 @@
-%h4 Edit settings / Change password
+.row-fluid
+  .span12
+    %h3 Settings
 
-= form_for :account, :url => { :controller => 'home', :action => :update_account} do |f|
-  = f.error_messages
-  %p
-    %b Leave blank if you don't want to change the password
-    %br/
-    = f.label :password
-    %br/
-    = f.password_field :password, :autocomplete => :off
-  %p
-    = f.label :password_confirmation
-    %br/
-    = f.password_field :password_confirmation, :autocomplete => :off
-  %hr/
-  = submit_tag 'Update'
-
-= link_to 'Go back', :controller => :home, :action => :home
+.row-fluid
+  .span12
+    = form_for :account, :url => { :controller => 'home', :action => :update_account} do |f|
+      = f.error_messages
+      %p.desc Leave blank if you don't want to change the password
+      .control-group
+        = f.label :password, :class =>'control-label'
+        .controls
+          = f.password_field :password, :autocomplete => :off
+      .control-group
+        = f.label :password_confirmation, :class =>'control-label'
+        .controls
+          = f.password_field :password_confirmation, :autocomplete => :off
+      %hr
+      .bottom-actions
+        = submit_tag 'Update', :class => 'btn btn-primary'
+        = link_to 'Cancel', {:controller => :home, :action => :home}, :class => 'btn btn-link'

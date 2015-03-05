@@ -1,38 +1,42 @@
-%h4
-  Report Set: #{@report_set.name}
+= render 'shared_tabs'
 
-%div
-  %b Submit URL:
-  = url_for :only_path => false, :controller => 'report_set', :action => 'incoming', :key => @report_set.submit_url_key
-%br/
+.row-fluid
+  .span12
+    %b Submit URL:
+    = url_for :only_path => false, :controller => 'report_set', :action => 'incoming', :key => @report_set.submit_url_key
+.row-fluid
+  .span12
+    = form_for :report, :url => { :controller => 'report', :action => :create, :report_set_id => @report_set.id} do |f|
+      = f.text_field :original, :size => 80
+      = submit_tag 'Send new report', :class => 'btn'
 
-%div= link_to "Download as CSV", :controller => :report_set, :action => :download_as_csv, :id => @report_set.id
-%br/
-
-= form_for :report, :url => { :controller => 'report', :action => :create, :report_set_id => @report_set.id} do |f|
-  = f.text_field :original, :size => 80
-  = submit_tag 'Send new report'
-
-- if @reports.length > 0
-  %table.reports
-    %tr
-      %th Received
-      %th Understood
-      %th Created
-      %th
-    - @reports.each do |report|
-      %tr.report{:valign => "baseline"}
-        %td= report.original
-        %td.understood
-          - report.parsed.each_with_index do |parse, idx|
-            .piece{:style => "line-height:24px"}
-              %span.content= parse
-              %a{:href => "#", :onclick => "javascript:correct_report(this, #{report.id}, #{idx})"} fix
-        %td
-          = report.created_at
-        %td
-          = link_to "reset", :controller => 'report', :action => :reset, :id => report.id if report.corrected
-          = link_to "delete", :controller => 'report', :action => :delete, :id => report.id
-  %br/
-
-= link_to 'Go back', :controller => :home, :action => :home
+.row-fluid
+  .span12
+    = link_to "Download as CSV", {:controller => :report_set, :action => :download_as_csv, :id => @report_set.id}, :class => 'btn btn-primary pull-right'
+.row-fluid
+  .span12
+    - if @reports.length > 0
+      %table.table
+        %thead
+          %tr
+            %th Received
+            %th Understood
+            %th Created
+            %th
+        %tbody
+          - @reports.each do |report|
+            %tr
+              %td= report.original
+              %td
+                - report.parsed.each_with_index do |parse, idx|
+                  .piece
+                    %span.content= parse
+                    %a{:href => "#", :onclick => "javascript:correct_report(this, #{report.id}, #{idx})"} fix
+              %td= report.created_at
+              %td
+                = link_to "reset", :controller => 'report', :action => :reset, :id => report.id if report.corrected
+                = link_to "delete", {:controller => 'report', :action => :delete, :id => report.id}, data: {:confirm => "Are you sure you want to delete this report: #{report.original}?"}
+%hr
+.row-fluid
+  .span12
+    = link_to 'Back to reports set', {:controller => :home, :action => :home}, :class => 'btn btn-primary'

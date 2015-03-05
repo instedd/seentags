@@ -59,7 +59,7 @@ class ReportSetController < AuthenticatedController
     end
 
     flash[:notice] = 'Report Set was updated'
-    redirect_to_home
+    redirect_to :action => :view
   end
 
   def delete

@@ -1,15 +1,20 @@
-%h4 Create new Report Set
+.row-fluid
+  .span12
+    %h3 Create new Report Set
 
-= form_for :report_set, :url => { :controller => 'report_set', :action => :create} do |f|
-  = f.error_messages
-  %p
-    = f.label :name
-    %br/
-    = f.text_field :name
-  %p
-    = f.label :url_callback, 'Callback'
-    %br/
-    = f.text_field :url_callback, :size => 75
-  = submit_tag 'Create Report Set'
-
-= link_to 'Go back', :controller => :home, :action => :home
+.row-fluid
+  .span12
+    = form_for :report_set, :url => { :controller => 'report_set', :action => :create} do |f|
+      = f.error_messages
+      .control-group
+        = f.label :name, :class => 'control-label'
+        .controls
+          = f.text_field :name
+      .control-group
+        = f.label :url_callback, 'Callback', :class => 'control-label'
+        .controls
+          = f.text_field :url_callback, :size => 75
+      %hr
+      .bottom-actions
+        = submit_tag 'Create Report Set', :class => 'btn btn-primary'
+        = link_to 'Cancel', {:controller => :home, :action => :home}, :class => 'btn btn-link'
