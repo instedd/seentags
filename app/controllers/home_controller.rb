@@ -1,9 +1,8 @@
 class HomeController < AuthenticatedController
-
   before_filter :check_login, :except => [:index, :login, :create_account]
 
   def index
-    if session[:account_id]
+    if session.has_key? :account_id
       return redirect_to controller: :home, action: :home
     end
 
@@ -88,8 +87,8 @@ class HomeController < AuthenticatedController
   end
 
   def logoff
-    session[:account] = nil
+    session.delete :account
+    session.delete :account_id
     redirect_to :action => :index
   end
-
 end
