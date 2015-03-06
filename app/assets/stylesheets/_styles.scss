@@ -52,3 +52,52 @@ span.content {
     margin-bottom: 0;
   }
 }
+.login-logo {
+  text-align: center;
+  img {
+    margin-left: -28px;
+  }
+}
+.login-signup {
+  height: 370px;
+  overflow: hidden;
+  .box-container {
+    @include transition (all ease 0.7s);
+  }
+  &.switch {
+    .box-container {
+      margin-top: -370px;
+    }
+  }
+}
+.login-box {
+  @extend .well-white;
+  width: 250px;
+  margin: 10px auto;
+  & + .login-box {
+    margin-top: 100px;
+  }
+  a {
+    cursor: pointer;
+  }
+}
+
+body.noheader.centred {
+  .app-header .span3 {
+    line-height: 50px;
+  }
+}
+.create-account {
+  @include transition (all ease 0.4s);
+  position: relative;
+  margin-top: -90px;
+  z-index: 2;
+
+  &.disabled {
+    color: #999999;
+    opacity: 0.3;
+    a {
+      @extend .disabled;
+    }
+  }
+}

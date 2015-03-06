@@ -1,5 +1,6 @@
 class HomeController < AuthenticatedController
   before_filter :check_login, :except => [:index, :login, :create_account]
+  layout 'login', only: [:login, :index]
 
   def index
     if session.has_key? :account_id
