@@ -43,3 +43,12 @@ acronym {
 .row-fluid + .row-fluid {
   margin-top: 6px;
 }
+span.content {
+  padding: 0 !important;
+
+  input[type="text"],
+  button {
+    vertical-align: middle;
+    margin-bottom: 0;
+  }
+}

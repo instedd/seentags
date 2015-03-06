@@ -38,9 +38,9 @@ function correct_report(elem, id, idx) {
   currentText = jQuery.trim($currentContent.text());
 
   $currentContent.html(
-    '<input type="text" style="width:440px"/> ' +
-    '<button onclick="save_correction()">Correct</button> ' +
-    '<button onclick="cancel_correction()">Cancel</button>'
+    '<input type="text"/> ' +
+    '<button onclick="save_correction()" class="btn btn-mini btn-primary">Correct</button> ' +
+    '<button onclick="cancel_correction()" class="btn btn-mini btn-link">Cancel</button>'
   );
 
   var input = $currentContent.contents('input');
