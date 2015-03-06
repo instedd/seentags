@@ -1,6 +1,6 @@
 class HomeController < AuthenticatedController
   before_filter :check_login, :except => [:index, :login, :create_account]
-  layout 'login', only: [:login, :index]
+  layout 'login', only: [:login, :index, :create_account]
 
   def index
     if session.has_key? :account_id
@@ -42,9 +42,17 @@ class HomeController < AuthenticatedController
 
     new_acc = Account.new(acc)
     if !new_acc.save
+      if new_acc.name.blank?
+        flash[:notice] = 'Missing account name'
+      elsif new_acc.password.blank?
+        flash[:notice] = 'Missing password'
+      else
+        flash[:notice] = 'Password confirmation mismatch'
+      end
       new_acc.clear_password
       @account = Account.new
       @new_account = new_acc
+      @use_new_account = true
       render 'index'
       return
     end

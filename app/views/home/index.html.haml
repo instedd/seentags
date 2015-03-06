@@ -1,13 +1,13 @@
 .row-fluid
   .span12
-    .create-account.pull-right
+    .create-account.pull-right{class: @use_new_account ? 'disabled' : nil}
       Dont you have an account yet?
       %a.btn.btn-warning
         Create account
 .row-fluid
   .span12.login-logo
     = image_tag "instedd-bootstrap/header/logos/seentags.png"
-.row-fluid.login-signup
+.row-fluid.login-signup{class: @use_new_account ? 'switch' : nil}
   .box-container
     .login-box
       %h3 Login
@@ -42,7 +42,6 @@
           = f.label :password_confirmation
           .controls
             = f.password_field :password_confirmation, :autocomplete => :off, :class => 'span12'
-        = f.error_messages
         %hr
         .control-group
           = submit_tag 'Sign up', :class => 'btn'
